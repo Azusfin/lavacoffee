@@ -6,7 +6,7 @@ import { LavaOptions, NodeOptions, PlayerOptions, SearchQuery, SearchResult } fr
 import { TypedEmitter } from "tiny-typed-emitter"
 import { EventPayloads, TrackEndPayload, TrackExceptionPayload, TrackStartPayload, TrackStuckPayload, VoiceServerUpdate, VoiceStateUpdate, WebSocketClosedPayload } from "../utils/payloads"
 import { check } from "../utils/decorators/validators"
-import { EventTypes, LoopMode, OpCodes, PlayerStates } from "../utils/constants"
+import { EventTypes, LoopMode, OpCodes, PlayerStates, PlayerVoiceStates } from "../utils/constants"
 import { constructCoffee } from "../utils/decorators/constructs"
 import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
 import { LoadTypes, TrackData, TrackInfo, TracksData } from "../utils/rest"
@@ -193,7 +193,10 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       if (player.options.voiceID !== p.d.channel_id) {
         this.emit("playerMove", player, player.options.voiceID, p.d.channel_id)
         player.options.voiceID = p.d.channel_id
-        if (!p.d.channel_id) player.pause(true)
+        if (!p.d.channel_id) {
+          player.voiceState = PlayerVoiceStates.Disconnected
+          player.pause(true)
+        }
       }
     }
 
@@ -305,6 +308,12 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         }
         break
       case EventTypes.WebSocketClosed:
+        if (this.options.autoResume && player.voiceState === PlayerVoiceStates.Connected) {
+          try {
+            player.connect()
+          // eslint-disable-next-line no-empty
+          } catch {}
+        }
         this.emit("socketClosed", player, event as WebSocketClosedPayload)
         break
       default:

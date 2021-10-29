@@ -89,6 +89,8 @@ export interface LavaOptions {
   defaultSearchPlatform?: SearchPlatform
   /** Whether to replay track automatically when node used on player is disconnected */
   autoReplay?: boolean
+  /** Wether to resume voice connection if socket closed unexpectedly */
+  autoResume?: boolean
   /** Function to send voice state to the websocket */
   send(guildID: string, voiceState: VoiceStatePayload)
 }
