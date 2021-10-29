@@ -1,6 +1,6 @@
 {
   "name": "lavacoffee",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight and rich-featured lavalink wrapper",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -51,5 +51,13 @@
     "LICENSE",
     "dist",
     "index.d.ts"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XzFirzal/lavacoffee"
+  },
+  "bugs": {
+    "url": "https://github.com/XzFirzal/lavacoffee/issues"
+  },
+  "homepage": "https://xzfirzal.github.io/lavacoffee"
 }
