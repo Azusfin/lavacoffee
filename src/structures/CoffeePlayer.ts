@@ -65,6 +65,14 @@ export class CoffeePlayer {
     return method(node)
   })
   public setNode(node: string): void {
+    try {
+      void this.node.send({
+        op: OpCodes.Destroy,
+        guildId: this.options.guildID
+      })
+    // eslint-disable-next-line no-empty
+    } catch {}
+
     this.options.node = node
 
     if (
