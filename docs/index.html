@@ -5,9 +5,6 @@
 <blockquote>
 <p>A lightweight and rich-featured lavalink wrapper for node.js</p>
 </blockquote>
-<blockquote>
-<p>Install and grab some coffee ☕</p>
-</blockquote>
 <p><a href="https://www.npmjs.com/package/lavacoffee"><img src="https://img.shields.io/npm/v/lavacoffee.svg?maxAge=3600" alt="NPM Version"></a>
 <a href="https://www.npmjs.com/package/lavacoffee"><img src="https://img.shields.io/npm/dt/lavacoffee.svg?maxAge=3600" alt="NPM Downloads"></a></p>
 
@@ -19,6 +16,7 @@
 <li><a href="#installation">Installation</a></li>
 <li><a href="#documentation">Documentation</a></li>
 <li><a href="#getting-lavalink">Getting Lavalink</a></li>
+<li><a href="#cycle">Cycle</a></li>
 <li><a href="#test">Test</a></li>
 <li><a href="#examples">Examples</a><ul>
 <li><a href="#init">Init</a></li>
@@ -66,7 +64,23 @@
 <p>Download the latest binaries from the <a href="https://ci.fredboat.com/repository/download/Lavalink_Build?guest=1&amp;branch=refs/heads/dev">CI Server (Dev)</a></p>
 <p>Put an <a href="https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example">application.yml</a> in your working directory.</p>
 <p>Run with <code>java -jar Lavalink.jar</code></p>
-<p>Docker images are available on the <a href="https://hub.docker.com/r/fredboat/lavalink/">Docker hub</a>.</p>
+<p>Docker images are available on the <a href="https://hub.docker.com/r/fredboat/lavalink/">Docker hub</a></p>
+
+<a href="#cycle" id="cycle" style="color: inherit; text-decoration: none;">
+  <h1>Cycle</h1>
+</a>
+<blockquote>
+<p>Init lava client</p>
+</blockquote>
+<blockquote>
+<p>Add some nodes</p>
+</blockquote>
+<blockquote>
+<p>Play track</p>
+</blockquote>
+<blockquote>
+<p>Grab some coffee ☕</p>
+</blockquote>
 
 <a href="#test" id="test" style="color: inherit; text-decoration: none;">
   <h1>Test</h1>
@@ -95,7 +109,7 @@
 <a href="#voice-updates" id="voice-updates" style="color: inherit; text-decoration: none;">
   <h3>Voice Updates</h3>
 </a>
-<pre><code class="language-ts"><span class="hl-0">// Payload can be voice state update payload or voice server update payload</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">updateVoiceData</span><span class="hl-2">(</span><span class="hl-3">payload</span><span class="hl-2">)</span>
+<pre><code class="language-ts"><span class="hl-0">// Payload can be a voice state update payload or a voice server update payload</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">updateVoiceData</span><span class="hl-2">(</span><span class="hl-3">payload</span><span class="hl-2">)</span>
 </code></pre>
 
 <a href="#events" id="events" style="color: inherit; text-decoration: none;">
@@ -124,6 +138,6 @@
 <a href="#replaying" id="replaying" style="color: inherit; text-decoration: none;">
   <h3>Replaying</h3>
 </a>
-<pre><code class="language-ts"><span class="hl-0">/**</span><br/><span class="hl-0"> * When player is disconnected from node</span><br/><span class="hl-0"> * it will automatically move to another node</span><br/><span class="hl-0"> * then replay the track on current position</span><br/><span class="hl-0"> * you can disable this behaviour with setting</span><br/><span class="hl-0"> * `autoReplay` to false in LavaOptions</span><br/><span class="hl-0"> */</span><br/><br/><span class="hl-0">// Replay events</span><br/><br/><span class="hl-0">// When successfully replayed</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">on</span><span class="hl-2">(</span><span class="hl-4">&quot;playerReplay&quot;</span><span class="hl-2">, </span><span class="hl-3">player</span><span class="hl-2"> </span><span class="hl-5">=&gt;</span><span class="hl-2"> { ... })</span><br/><br/><span class="hl-0">// When there&#39;s an error while replaying</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">on</span><span class="hl-2">(</span><span class="hl-4">&quot;replayError&quot;</span><span class="hl-2">, (</span><span class="hl-3">player</span><span class="hl-2">, </span><span class="hl-3">error</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> { ... })</span><br/><span class="hl-2">...</span>
+<pre><code class="language-ts"><span class="hl-0">/**</span><br/><span class="hl-0"> * When player is disconnected from node</span><br/><span class="hl-0"> * it will automatically move to another node</span><br/><span class="hl-0"> * then replay the track on current position</span><br/><span class="hl-0"> * you can disable this behaviour by setting</span><br/><span class="hl-0"> * the `autoReplay` option to false in LavaOptions</span><br/><span class="hl-0"> */</span><br/><br/><span class="hl-0">// Replay events</span><br/><br/><span class="hl-0">// When successfully replayed</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">on</span><span class="hl-2">(</span><span class="hl-4">&quot;playerReplay&quot;</span><span class="hl-2">, </span><span class="hl-3">player</span><span class="hl-2"> </span><span class="hl-5">=&gt;</span><span class="hl-2"> { ... })</span><br/><br/><span class="hl-0">// When there&#39;s an error while replaying</span><br/><span class="hl-3">lava</span><span class="hl-2">.</span><span class="hl-7">on</span><span class="hl-2">(</span><span class="hl-4">&quot;replayError&quot;</span><span class="hl-2">, (</span><span class="hl-3">player</span><span class="hl-2">, </span><span class="hl-3">error</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> { ... })</span><br/><span class="hl-2">...</span>
 </code></pre>
 </div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li><li class=" tsd-kind-namespace"><a href="modules/Utils.html">Utils</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/CoffeeLava.html" class="tsd-kind-icon">Coffee<wbr/>Lava</a></li><li class="tsd-kind-class"><a href="classes/CoffeeNode.html" class="tsd-kind-icon">Coffee<wbr/>Node</a></li><li class="tsd-kind-class"><a href="classes/CoffeePlayer.html" class="tsd-kind-icon">Coffee<wbr/>Player</a></li><li class="tsd-kind-class"><a href="classes/CoffeeQueue.html" class="tsd-kind-icon">Coffee<wbr/>Queue</a></li><li class="tsd-kind-class"><a href="classes/CoffeeTrack.html" class="tsd-kind-icon">Coffee<wbr/>Track</a></li><li class="tsd-kind-class"><a href="classes/UnresolvedTrack.html" class="tsd-kind-icon">Unresolved<wbr/>Track</a></li><li class="tsd-kind-interface"><a href="interfaces/ITrack.html" class="tsd-kind-icon">ITrack</a></li><li class="tsd-kind-interface"><a href="interfaces/LavaEvents.html" class="tsd-kind-icon">Lava<wbr/>Events</a></li><li class="tsd-kind-interface"><a href="interfaces/NodeEvents.html" class="tsd-kind-icon">Node<wbr/>Events</a></li><li class="tsd-kind-variable"><a href="modules.html#version" class="tsd-kind-icon">version</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
