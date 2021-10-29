@@ -106,7 +106,7 @@ export class CoffeePlayer {
     this.voiceState = PlayerVoiceStates.Connected
   }
 
-  /** Disconenct from the voice channel */
+  /** Disconnect from the voice channel */
   @check(function (this: CoffeePlayer, method) {
     if (this.voiceState !== PlayerVoiceStates.Connected) return
     return method()
