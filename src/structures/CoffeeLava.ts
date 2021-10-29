@@ -70,6 +70,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       autoPlay: true,
       defaultSearchPlatform: "yt",
       autoReplay: true,
+      autoResume: true,
       ...options
     }
   }
