@@ -1,0 +1,12 @@
+{
+  "extends": "@zhycorp/eslint-config/typescript/node",
+  "rules": {
+    "sort-keys": "off",
+    "linebreak-style": "off",
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/no-unnecessary-condition": "off",
+    "@typescript-eslint/indent": ["error", 2]
+  }
+}
