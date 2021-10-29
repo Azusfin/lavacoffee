@@ -1,8 +1,6 @@
 # lavacoffee
 > A lightweight and rich-featured lavalink wrapper for node.js
 
-> Install and grab some coffee ☕
-
 [![NPM Version](https://img.shields.io/npm/v/lavacoffee.svg?maxAge=3600)](https://www.npmjs.com/package/lavacoffee)
 [![NPM Downloads](https://img.shields.io/npm/dt/lavacoffee.svg?maxAge=3600)](https://www.npmjs.com/package/lavacoffee)
 
@@ -11,6 +9,7 @@
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Getting Lavalink](#getting-lavalink)
+- [Cycle](#cycle)
 - [Test](#test)
 - [Examples](#examples)
   - [Init](#init)
@@ -41,7 +40,16 @@ Put an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/Lava
 
 Run with `java -jar Lavalink.jar`
 
-Docker images are available on the [Docker hub](https://hub.docker.com/r/fredboat/lavalink/).
+Docker images are available on the [Docker hub](https://hub.docker.com/r/fredboat/lavalink/)
+
+# Cycle
+> Init lava client
+
+> Add some nodes
+
+> Play track
+
+> Grab some coffee ☕
 
 # Test
 [Test Bot](https://github.com/XzFirzal/lavacoffee/blob/main/test/index.ts)
@@ -73,7 +81,7 @@ lava.add(nodeOptions2)
 
 ### Voice Updates
 ```ts
-// Payload can be voice state update payload or voice server update payload
+// Payload can be a voice state update payload or a voice server update payload
 lava.updateVoiceData(payload)
 ```
 
@@ -119,8 +127,8 @@ const track = player.queue.current
  * When player is disconnected from node
  * it will automatically move to another node
  * then replay the track on current position
- * you can disable this behaviour with setting
- * `autoReplay` to false in LavaOptions
+ * you can disable this behaviour by setting
+ * the `autoReplay` option to false in LavaOptions
  */
 
 // Replay events
