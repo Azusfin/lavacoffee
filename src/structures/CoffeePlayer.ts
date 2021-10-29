@@ -144,12 +144,17 @@ export class CoffeePlayer {
   public async play(options: PlayOptions): Promise<void> {
     const prevOfPrevious = this.queue.previous
 
-    if (this.loop === LoopMode.Track) this.queue.previous = this.queue.current
-    else this.queue.progress()
+    if (
+      this.loop === LoopMode.Track ||
+      (this.loop === LoopMode.Queue && !this.queue.length)
+    ) {
+      this.queue.previous = this.queue.current
+    } else {
+      this.queue.progress()
+      if (this.loop === LoopMode.Queue) this.queue.add(this.queue.previous!)
+    }
 
     if (!this.queue.current) return
-
-    if (this.loop === LoopMode.Queue) this.queue.add(this.queue.previous!)
 
     try {
       await this.resolveCurrent()

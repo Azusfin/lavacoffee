@@ -282,7 +282,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       case EventTypes.TrackEnd:
         {
           this.emit("trackEnd", player, track, event as TrackEndPayload)
-          if (!player.queue.length && player.loop !== LoopMode.Track) {
+          if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackEndPayload)
           }
           if (this.options.autoPlay) void player.play({})
@@ -291,7 +291,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       case EventTypes.TrackStuck:
         {
           this.emit("trackStuck", player, track, event as TrackStuckPayload)
-          if (!player.queue.length && player.loop !== LoopMode.Track) {
+          if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackEndPayload)
           }
           if (this.options.autoPlay) void player.play({})
@@ -302,7 +302,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
           // Replay
           if ((event as TrackExceptionPayload).exception.message === "The track was unexpectedly terminated.") return
           this.emit("trackError", player, track, event as TrackExceptionPayload)
-          if (!player.queue.length && player.loop !== LoopMode.Track) {
+          if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackEndPayload)
           }
           if (this.options.autoPlay) void player.play({})
