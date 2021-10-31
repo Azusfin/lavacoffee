@@ -3,7 +3,7 @@ if (!process.env.DEBUG) process.env.DEBUG = "lavacoffee"
 import ms from "ms"
 import debugFactory from "debug"
 import config from "./config.json"
-import { CoffeeLava, CoffeeNode, CoffeeTrack, UnresolvedTrack, version as coffeeVersion } from "../src"
+import { CoffeeLava, CoffeeNode, CoffeeTrack, UnresolvedTrack, CoffeeFilters, version as coffeeVersion } from "../src"
 import { Client, Intents, Message, MessageEmbed, MessageSelectMenu, TextChannel, version as djsVersion } from "discord.js"
 import { LoadTypes, LoopMode, PlayerVoiceStates } from "../src/utils"
 
@@ -654,10 +654,14 @@ new LavalinkClient(async function (msg) {
           return
         }
 
-        const filters = player.filters
+        if (speed <= 0) {
+          msg.reply({ embeds: [error("Speed must be more than 0")] })
+          return
+        }
 
-        if (!filters.timescale) filters.timescale = { speed, pitch: 1, rate: 1 }
-        else filters.timescale.speed = speed
+        const filters = new CoffeeFilters(player.filters)
+
+        filters.timescale.setSpeed(speed)
 
         player.setFilters(filters)
         player.patchFilters()
@@ -685,10 +689,14 @@ new LavalinkClient(async function (msg) {
           return
         }
 
-        const filters = player.filters
+        if (pitch <= 0) {
+          msg.reply({ embeds: [error("Pitch must be more than 0")] })
+          return
+        }
 
-        if (!filters.timescale) filters.timescale = { speed: 1, pitch, rate: 1 }
-        else filters.timescale.pitch = pitch
+        const filters = new CoffeeFilters(player.filters)
+
+        filters.timescale.setPitch(pitch)
 
         player.setFilters(filters)
         player.patchFilters()
