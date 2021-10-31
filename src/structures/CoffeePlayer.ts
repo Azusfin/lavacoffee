@@ -23,8 +23,10 @@ export class CoffeePlayer {
   public readonly lava: CoffeeLava
   /** The player position in milliseconds */
   public position = 0
-  /** Wether the player is currently replaying */
+  /** Whether the player is currently replaying */
   public replaying = false
+  /** Whether the player is connected to voice on node-side */
+  public voiceConnected = false
   /** The player filters */
   public filters: Filters = {}
   /** The player loop mode */
