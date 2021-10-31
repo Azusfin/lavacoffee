@@ -140,3 +140,43 @@ lava.on("playerReplay", player => { ... })
 lava.on("replayError", (player, error) => { ... })
 ...
 ```
+
+### Filters
+```ts
+/**
+ * LavaCoffee also supports lavalink filters
+ * it also got filters builder to manage filters easier
+ */
+
+// Importing filters builder
+import { CoffeeFilters } from "lavacoffee"
+
+// Creating filters
+const filters = new CoffeeFilters()
+
+// Example on setting equalizer
+filters.equalizers
+  .setBand(2, 1.3)
+  .setBand(6, -2)
+
+// Example to enable karaoke filter
+filters.karaoke.enabled = true
+
+// Example on setting 2x speed and half pitch
+filters.timescale
+  .setSpeed(2)
+  .setPitch(0.5)
+
+// Example on setting vibrato filter
+filters.vibrato
+  .setFrequency(2)
+  .setDepth(0.5)
+
+// Example on setting the audio for only left channel
+filters.channelMix
+  .setRightToLeft(1)
+  .setRightToRight(0)
+
+// Set the filters
+player.setFilters(filters)
+```
