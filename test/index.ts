@@ -5,7 +5,7 @@ import debugFactory from "debug"
 import config from "./config.json"
 import { CoffeeLava, CoffeeNode, CoffeeTrack, UnresolvedTrack, CoffeeFilters, version as coffeeVersion } from "../src"
 import { Client, Intents, Message, MessageEmbed, MessageSelectMenu, TextChannel, version as djsVersion } from "discord.js"
-import { LoadTypes, LoopMode, PlayerVoiceStates } from "../src/utils"
+import { LoadTypes, LoopMode, PlayerStates, PlayerVoiceStates } from "../src/utils"
 
 const debug = debugFactory("lavacoffee")
 
@@ -724,6 +724,54 @@ new LavalinkClient(async function (msg) {
           .setTitle("Resetted the filters")
           .setColor("GREEN")
         
+        msg.reply({ embeds: [embed] })
+      }
+      break
+    case "pause":
+      {
+        const player = this.lava.get(msg.guildId!)
+
+        if (!player) {
+          msg.reply({ embeds: [error("No player was found")] })
+          return
+        }
+
+        player.pause(true)
+
+        const embed = new MessageEmbed()
+
+        if (player.state === PlayerStates.Paused) {
+          embed.setTitle("Paused the player")
+            .setColor("GREEN")
+        } else {
+          embed.setTitle("Failed to pause")
+            .setColor("RED")
+        }
+
+        msg.reply({ embeds: [embed] })
+      }
+      break
+    case "resume":
+      {
+        const player = this.lava.get(msg.guildId!)
+
+        if (!player) {
+          msg.reply({ embeds: [error("No player was found")] })
+          return
+        }
+
+        player.pause(false)
+
+        const embed = new MessageEmbed()
+
+        if (player.state === PlayerStates.Playing) {
+          embed.setTitle("Resumed the player")
+            .setColor("GREEN")
+        } else {
+          embed.setTitle("Failed to resume")
+            .setColor("RED")
+        }
+
         msg.reply({ embeds: [embed] })
       }
       break
