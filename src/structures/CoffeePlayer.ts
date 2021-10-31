@@ -249,7 +249,7 @@ export class CoffeePlayer {
   /** Pause the current track */
   @check(function (this: CoffeePlayer, method, pause: boolean) {
     if (typeof pause !== "boolean") throw new TypeError("Parameter 'pause' must be present and be a boolean")
-    if (this.state === PlayerStates.Paused || !this.queue.totalSize) return
+    if ((pause && this.state === PlayerStates.Paused) || !this.queue.totalSize) return
     return method(pause)
   })
   public pause(pause: boolean): void {
