@@ -158,8 +158,8 @@ const filters = new CoffeeFilters()
 
 // Example on setting equalizer
 filters.equalizers
-  .setBand(2, 1.3)
-  .setBand(6, -2)
+  .setBand(2, 0.25)
+  .setBand(6, -0.25)
 
 // Example to enable karaoke filter
 filters.karaoke.enabled = true

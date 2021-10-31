@@ -133,7 +133,7 @@ export class EqualizerUtils {
     }
   }
 
-  /** Set a band equalizer, band must be between 0 to 13 */
+  /** Set a band equalizer, band must be between 0 to 14, gain must be between -0.25 to 1 */
   @check(function (method, band: number, gain: number) {
     if (
       typeof band !== "number" || isNaN(band)
@@ -142,8 +142,11 @@ export class EqualizerUtils {
       typeof gain !== "number" || isNaN(gain)
     ) throw new TypeError("Parameter 'gain' must be present and be a number")
     if (
-      band < 0 || band > 13
-    ) throw new TypeError("Parameter 'band' must be between 0 to 13")
+      band < 0 || band > 14
+    ) throw new TypeError("Parameter 'band' must be between 0 to 14")
+    if (
+      gain < -0.25 || gain > 1
+    ) throw new TypeError("Parameter 'gain' must be between -0.25 to 1")
     return method(band, gain)
   })
   public setBand(band: number, gain: number): this {
