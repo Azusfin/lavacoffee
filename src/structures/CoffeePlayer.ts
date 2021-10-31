@@ -11,6 +11,7 @@ import { VoiceUpdatePayload, PausePayload, SeekPayload, StopPayload, VolumePaylo
 import { LoopMode, PlayerStates, PlayerVoiceStates, OpCodes } from "../utils/constants"
 import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
 import { LoadTypes } from "../utils/rest"
+import { FilterUtils } from "../utils/filterUtils"
 
 @constructPlayer()
 export class CoffeePlayer {
@@ -198,8 +199,8 @@ export class CoffeePlayer {
     ) throw new TypeError("Parameter 'filters' must be present and be an object")
     return method(filters)
   })
-  public setFilters(filters: Filters): void {
-    this.filters = filters
+  public setFilters(filters: Filters | FilterUtils): void {
+    this.filters = filters instanceof FilterUtils ? filters.build() : filters
   }
 
   /** Set the player volume */

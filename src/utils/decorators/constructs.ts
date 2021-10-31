@@ -12,6 +12,10 @@ export function decorateConstructor(func: (target, args: any[]) => any) {
   }
 }
 
+export function construct(func: (target, args: any[]) => any): (target: any) => any {
+  return decorateConstructor(func)
+}
+
 export function constructCoffee(): (target: any) => any {
   return decorateConstructor((coffee, args) => {
     const options = args[0] as LavaOptions
