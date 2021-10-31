@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "tiny-typed-emitter": "^2.1.0",
-    "undici": "^4.8.2",
+    "undici": "^4.9.2",
     "ws": "^8.2.3"
   },
   "files": [
