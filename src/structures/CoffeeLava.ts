@@ -127,8 +127,11 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
     const result: SearchResult = {
       loadType: res.loadType,
-      error: res.exception,
       tracks: res.tracks.map(track => new CoffeeTrack(track, requester))
+    }
+
+    if (res.loadType === LoadTypes.LoadFailed) {
+      result.error = res.exception
     }
 
     if (res.loadType === LoadTypes.PlaylistLoaded) {
