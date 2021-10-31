@@ -20,6 +20,8 @@
     - [Creating](#creating)
     - [Getting](#getting)
     - [Replaying](#replaying)
+    - [Filters](#filters)
+    - [Unknown Track](#unknown-track)
 
 # Features
 - Easy-to-use
@@ -172,11 +174,29 @@ filters.vibrato
   .setFrequency(2)
   .setDepth(0.5)
 
-// Example on setting the audio for only left channel
+// Example on setting the audio to only left channel
 filters.channelMix
   .setRightToLeft(1)
   .setRightToRight(0)
 
 // Set the filters
 player.setFilters(filters)
+```
+
+### Unknown Track
+```ts
+/**
+ * You can make an unknown track
+ * from unknown source, and resolve it
+ * once it playing
+ */
+
+// Importing unresolved track
+import { UnresolvedTrack } from "lavacoffee"
+
+// Creating the track
+const track = new UnresolvedTrack(title, author, duration, requester)
+
+// Adding the track
+player.queue.add(track)
 ```
