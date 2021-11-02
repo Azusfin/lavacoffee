@@ -53,6 +53,11 @@ export function constructCoffee(): (target: any) => any {
       typeof options.autoResume !== "boolean"
     ) throw new TypeError("Lava option 'autoResume' must be a boolean")
 
+    if (
+      typeof options.structures !== "undefined" &&
+      (typeof options.structures !== "object" || options.structures === null)
+    ) throw new TypeError("Lava option 'structures' must be an object")
+
     return new coffee(options)
   })
 }
