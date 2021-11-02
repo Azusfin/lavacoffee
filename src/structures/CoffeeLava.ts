@@ -257,14 +257,6 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       if (!player) return
       player.position = state.position
       player.voiceConnected = state.connected
-
-      if (!player.voiceConnected && player.voiceState === PlayerVoiceStates.Connected) {
-        if (
-          this.options.autoResume &&
-          player.options.voiceID
-        ) player.connect()
-        else player.disconnect()
-      }
     })
 
     if (this.clientID) node.connect()
@@ -325,6 +317,14 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         }
         break
       case EventTypes.WebSocketClosed:
+        if (!player.voiceConnected && player.voiceState === PlayerVoiceStates.Connected) {
+          if (
+            this.options.autoResume &&
+            player.options.voiceID
+          ) player.connect()
+          else player.disconnect()
+        }
+
         this.emit("socketClosed", player, event as WebSocketClosedPayload)
         break
       default:
