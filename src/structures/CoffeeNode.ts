@@ -6,6 +6,7 @@ import { TypedEmitter } from "tiny-typed-emitter"
 import { NodeOptions, NodeStats } from "../utils/typings"
 import { constructNode } from "../utils/decorators/constructs"
 import { IncomingPayloads, EventPayloads, PlayerUpdatePayload, OutgoingPayloads } from "../utils/payloads"
+import { OpCodes } from "../utils"
 
 export interface NodeEvents {
   /** Emitted when node is destroyed */
@@ -38,6 +39,8 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   public calls = 0
   /** Whether the node already connected via websocket */
   public connected = false
+  /** Whether the node is resumed from previous session */
+  public resumed = false
   /** The http clients pool for http calls */
   public readonly http: Pool
   private reconnectTimeout?: NodeJS.Timeout
@@ -126,10 +129,21 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
       "Client-Name": this.lava.options.clientName
     }
 
+    if (typeof this.lava.options.resumeConfig !== "undefined") {
+      headers["Resume-Key"] = this.lava.options.resumeConfig.key
+    }
+
     this.socket = new WebSocket(
       `ws${this.options.secure ? "s" : ""}://${this.options.url}/`,
       { headers }
     )
+
+    this.socket.once("upgrade", req => {
+      const resumed = req.headers["session-resumed"]
+
+      if (resumed === "true") this.resumed = true
+      else this.resumed = false
+    })
 
     this.socket.once("open", this.open.bind(this))
     this.socket.once("close", this.close.bind(this))
@@ -171,6 +185,17 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
     })
   }
 
+  /** Configure the resume config */
+  public configResume(): void {
+    if (!this.lava.options.resumeConfig) return
+
+    void this.send({
+      op: OpCodes.ConfigResume,
+      key: this.lava.options.resumeConfig.key,
+      timeout: this.lava.options.resumeConfig.timeout!
+    })
+  }
+
   private reconnect(): void {
     this.reconnectTimeout = setTimeout(() => {
       if (this.reconnectAttempts >= this.options.retryAmount!) {
@@ -191,6 +216,7 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   private open(): void {
     if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout)
     this.connected = true
+    this.configResume()
     this.emit("connect")
   }
 

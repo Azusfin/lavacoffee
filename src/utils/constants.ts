@@ -6,7 +6,8 @@ export enum OpCodes {
   Seek = "seek",
   Volume = "volume",
   Filters = "filters",
-  Destroy = "destroy"
+  Destroy = "destroy",
+  ConfigResume = "configureResuming"
 }
 
 export enum OpIncoming {

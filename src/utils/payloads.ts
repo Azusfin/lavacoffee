@@ -47,6 +47,7 @@ export type OutgoingPayloads =
   | VolumePayload
   | FiltersPayload
   | DestroyPayload
+  | ConfigResumePayload
 
 export interface VoiceUpdatePayload extends OutgoingPayload {
   op: OpCodes.VoiceUpdate
@@ -89,6 +90,12 @@ export interface FiltersPayload extends OutgoingPayload, Filters {
 
 export interface DestroyPayload extends OutgoingPayload {
   op: OpCodes.Destroy
+}
+
+export interface ConfigResumePayload {
+  op: OpCodes.ConfigResume
+  key: string
+  timeout: number
 }
 
 export interface IncomingPayload {

@@ -1,3 +1,4 @@
+import { CoffeeLava, CoffeePlayer } from "../structures";
 import { CoffeeTrack } from "../structures/CoffeeTrack";
 import { LoadTypes } from "./rest";
 
@@ -91,6 +92,8 @@ export interface LavaOptions {
   autoReplay?: boolean
   /** Wether to resume voice connection if socket closed unexpectedly */
   autoResume?: boolean
+  /** The config for resuming */
+  resumeConfig?: ResumeConfig
   /** Function to send voice state to the websocket */
   send(guildID: string, voiceState: VoiceStatePayload)
 }
@@ -147,4 +150,13 @@ export interface SearchResult {
     message: string
     severity: string
   }
+}
+
+export interface ResumeConfig {
+  /** The resume key for resuming lavalink session */
+  key: string
+  /** The timeout for the session, if timeout is passed before resumed, it can't be resumed anymore */
+  timeout?: number
+  /** The function to create and handle player after resuming */
+  handle(lava: CoffeeLava, guildID: string, callback: (player: CoffeePlayer) => void): any
 }

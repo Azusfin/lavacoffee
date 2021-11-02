@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 import { CoffeeNode } from "./CoffeeNode"
 import { CoffeePlayer } from "./CoffeePlayer"
-import { LavaOptions, NodeOptions, PlayerOptions, SearchQuery, SearchResult } from "../utils/typings"
+import { LavaOptions, NodeOptions, PlayerOptions, ResumeConfig, SearchQuery, SearchResult } from "../utils/typings"
 import { TypedEmitter } from "tiny-typed-emitter"
 import { EventPayloads, TrackEndPayload, TrackExceptionPayload, TrackStartPayload, TrackStuckPayload, VoiceServerUpdate, VoiceStateUpdate, WebSocketClosedPayload } from "../utils/payloads"
 import { check } from "../utils/decorators/validators"
@@ -72,6 +72,12 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       autoReplay: true,
       autoResume: true,
       ...options
+    }
+
+    delete this.options.resumeConfig
+
+    if (typeof options.resumeConfig !== "undefined") {
+      this.configResume(options.resumeConfig)
     }
   }
 
@@ -209,6 +215,37 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     ) void player.node.send(voice)
   }
 
+  /** Configure the resume config */
+  @check(function (method, config: ResumeConfig) {
+    if (
+      typeof config !== "object" ||
+      config === null
+    ) throw new TypeError("Parameters 'config' must be present and be an object")
+    if (
+      typeof config.key !== "string" || !config.key
+    ) throw new TypeError("Config 'key' must be present and be a non-empty string")
+    if (
+      typeof config.handle !== "function"
+    ) throw new TypeError("Config 'handle' must be present and be a function")
+    if (
+      typeof config.timeout !== "undefined" &&
+      (typeof config.timeout !== "number" || isNaN(config.timeout))
+    ) throw new TypeError("Config 'timeout' must be a number")
+    return method(config)
+  })
+  public configResume(config: ResumeConfig): void {
+    this.options.resumeConfig = {
+      timeout: 60,
+      ...config
+    }
+
+    for (const node of this.nodes.values()) {
+      if (node.connected) {
+        node.configResume()
+      }
+    }
+  }
+
   /** Create a player or return one if it already exists */
   public create(options: PlayerOptions): CoffeePlayer {
     return new CoffeePlayer(this, options)
@@ -254,7 +291,20 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     })
     node.on("playerUpdate", (guildID, state) => {
       const player = this.players.get(guildID)
-      if (!player) return
+
+      if (!player) {
+        if (node.resumed) {
+          this.options.resumeConfig?.handle(
+            this, guildID, player => {
+              player.position = state.position
+              player.voiceConnected = state.connected
+            }
+          )
+        }
+
+        return
+      }
+
       player.position = state.position
       player.voiceConnected = state.connected
     })
