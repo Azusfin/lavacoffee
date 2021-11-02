@@ -294,9 +294,13 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       case EventTypes.TrackEnd:
         {
           this.emit("trackEnd", player, track, event as TrackEndPayload)
+
+          if ((event as TrackEndPayload).reason === "REPLACED") return
+
           if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackEndPayload)
           }
+
           if (this.options.autoPlay) void player.play({})
         }
         break
