@@ -16,7 +16,7 @@ import { FilterUtils } from "../utils/filterUtils"
 @constructPlayer()
 export class CoffeePlayer {
   /** The queue for the player */
-  public readonly queue = new CoffeeQueue()
+  public readonly queue: CoffeeQueue
   /** The player options */
   public readonly options: PlayerOptions
   /** The player manager */
@@ -42,6 +42,8 @@ export class CoffeePlayer {
 
   public constructor(lava: CoffeeLava, options: PlayerOptions) {
     this.lava = lava
+
+    this.queue = new lava.options.structures!.Queue!()
     this.options = {
       volume: 100,
       selfMute: false,

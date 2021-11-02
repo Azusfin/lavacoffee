@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 import { CoffeeNode } from "./CoffeeNode"
 import { CoffeePlayer } from "./CoffeePlayer"
-import { LavaOptions, NodeOptions, PlayerOptions, ResumeConfig, SearchQuery, SearchResult } from "../utils/typings"
+import { LavaOptions, NodeOptions, PlayerOptions, ResumeConfig, SearchQuery, SearchResult, Structures } from "../utils/typings"
 import { TypedEmitter } from "tiny-typed-emitter"
 import { EventPayloads, TrackEndPayload, TrackExceptionPayload, TrackStartPayload, TrackStuckPayload, VoiceServerUpdate, VoiceStateUpdate, WebSocketClosedPayload } from "../utils/payloads"
 import { check } from "../utils/decorators/validators"
@@ -10,6 +10,7 @@ import { EventTypes, LoopMode, OpCodes, PlayerStates, PlayerVoiceStates } from "
 import { constructCoffee } from "../utils/decorators/constructs"
 import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
 import { LoadTypes, TrackData, TrackInfo, TracksData } from "../utils/rest"
+import { CoffeeQueue } from "./CoffeeQueue"
 
 export interface LavaEvents {
   /** Emitted when a node is created */
@@ -64,6 +65,17 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
   public constructor(options: LavaOptions) {
     super()
+
+    const structures: Structures = {
+      Node: CoffeeNode,
+      Player: CoffeePlayer,
+      Queue: CoffeeQueue
+    }
+
+    if (options.structures) Object.assign(structures, options.structures)
+
+    options.structures = structures
+
     this.options = {
       clientName: "node-lavacoffee",
       shards: 1,
@@ -248,7 +260,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
   /** Create a player or return one if it already exists */
   public create(options: PlayerOptions): CoffeePlayer {
-    return new CoffeePlayer(this, options)
+    return new this.options.structures!.Player!(this, options)
   }
 
   /** Return a player or undefined if it doesn't exist */
@@ -264,7 +276,9 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
   /** Add a node */
   public add(nodeOptions: NodeOptions): void {
-    const node = new CoffeeNode(this, nodeOptions)
+    const node = new this.options.structures!.Node!(this, nodeOptions)
+
+    node.removeAllListeners()
 
     node.on("event", payload => this.handleEvent(node, payload))
     node.on("connect", () => this.emit("nodeConnect", node))

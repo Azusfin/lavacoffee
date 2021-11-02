@@ -1,4 +1,4 @@
-import { CoffeeLava, CoffeePlayer } from "../structures";
+import { CoffeeLava, CoffeeNode, CoffeePlayer, CoffeeQueue } from "../structures";
 import { CoffeeTrack } from "../structures/CoffeeTrack";
 import { LoadTypes } from "./rest";
 
@@ -94,6 +94,8 @@ export interface LavaOptions {
   autoResume?: boolean
   /** The config for resuming */
   resumeConfig?: ResumeConfig
+  /** The used structures for the instance */
+  structures?: Structures
   /** Function to send voice state to the websocket */
   send(guildID: string, voiceState: VoiceStatePayload)
 }
@@ -159,4 +161,10 @@ export interface ResumeConfig {
   timeout?: number
   /** The function to create and handle player after resuming */
   handle(lava: CoffeeLava, guildID: string, callback: (player: CoffeePlayer) => void): any
+}
+
+export interface Structures {
+  Node?: new (lava: CoffeeLava, options: NodeOptions) => CoffeeNode
+  Player?: new (lava: CoffeeLava, options: PlayerOptions) => CoffeePlayer
+  Queue?: new () => CoffeeQueue
 }
