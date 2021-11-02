@@ -16,6 +16,7 @@
   - [Nodes](#nodes)
   - [Voice Updates](#voice-updates)
   - [Events](#events)
+  - [Resuming Session](#resuming-session)
   - [Players](#players)
     - [Creating](#creating)
     - [Getting](#getting)
@@ -89,6 +90,48 @@ lava.updateVoiceData(payload)
 
 ### Events
 > [LavaEvents](https://xzfirzal.github.io/lavacoffee/interfaces/LavaEvents.html)
+
+### Resuming Session
+```ts
+/**
+ * Lavalink got a feature
+ * which will allow for resuming
+ * a session after it got
+ * disconnected
+ */
+
+/**
+ * After v1.2.0, lavacoffee
+ * added support for this feature,
+ * allowing for resuming lavalink session
+ * incase of bot restarted
+ */
+
+// Create the resume configuration
+const config = {
+  // The resume custom key for resuming lavalink session
+  key: "somekey",
+  // The timeout for the session, if timeout is passed before resumed, it can't be resumed anymore
+  timeout: 60, // 60 seconds
+  // Incase of player resumed, it must be handled manually by the user
+  handle(lava, guildID, callback) {
+    // Creating the player
+    const player = lava.create({ guildID })
+
+    // Redo the player state, e.g getting the player queue from database
+    ...
+
+    // Call callback to indicate as done
+    callback(player)
+  }
+}
+
+// Creating lava instance
+const lava = new CoffeeLava({
+  resumeConfig: config
+})
+...
+```
 
 ## Players 
 ### Creating
