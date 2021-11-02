@@ -1,5 +1,5 @@
 # lavacoffee
-> A lightweight and rich-featured lavalink wrapper for node.js
+> A fast and rich-featured lavalink wrapper for node.js
 
 [![NPM Version](https://img.shields.io/npm/v/lavacoffee.svg?maxAge=3600)](https://www.npmjs.com/package/lavacoffee)
 [![NPM Downloads](https://img.shields.io/npm/dt/lavacoffee.svg?maxAge=3600)](https://www.npmjs.com/package/lavacoffee)
@@ -26,7 +26,7 @@
 
 # Features
 - Easy-to-use
-- Lightweight and performant
+- Performant
 
 # Installation
 > NPM (Stable) => npm install lavacoffee
