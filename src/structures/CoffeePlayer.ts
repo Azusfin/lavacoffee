@@ -27,6 +27,8 @@ export class CoffeePlayer {
   public replaying = false
   /** Whether the player is connected to voice on node-side */
   public voiceConnected = false
+  /** Timestamp of the time the player was last updated */
+  public lastUpdated = Date.now()
   /** The player filters */
   public filters: Filters = {}
   /** The player loop mode */

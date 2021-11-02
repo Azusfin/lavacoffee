@@ -310,6 +310,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         if (node.resumed) {
           this.options.resumeConfig?.handle(
             this, guildID, player => {
+              player.lastUpdated = state.time
               player.position = state.position
               player.voiceConnected = state.connected
             }
@@ -319,6 +320,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         return
       }
 
+      player.lastUpdated = state.time
       player.position = state.position
       player.voiceConnected = state.connected
     })
