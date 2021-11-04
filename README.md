@@ -17,6 +17,7 @@
   - [Voice Updates](#voice-updates)
   - [Events](#events)
   - [Resuming Session](#resuming-session)
+  - [RoutePlanners](#routeplanners)
   - [Players](#players)
     - [Creating](#creating)
     - [Getting](#getting)
@@ -132,6 +133,26 @@ const lava = new CoffeeLava({
   /** other lava options */
 })
 ...
+```
+
+### RoutePlanners
+https://github.com/freyacodes/Lavalink/blob/master/IMPLEMENTATION.md#routeplanner-api
+```ts
+// RoutePlanner instance is available within Node instance
+const node = lava.nodes.get(nodeName)
+const { routePlanner } = node
+
+// Get routePlanner status
+// If no routePlanner is set on node-side, it will return undefined
+await routePlanner.status()
+
+// Unmark a failed address
+// Return true if success, otherwise false
+await routePlanner.freeAddress(address)
+
+// Unmark all failed address
+// Return true if success, otherwise false
+await routePlanner.freeAllAddress()
 ```
 
 ## Players 
