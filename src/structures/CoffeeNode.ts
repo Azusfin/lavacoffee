@@ -8,6 +8,7 @@ import { constructNode } from "../utils/decorators/constructs"
 import { IncomingPayloads, EventPayloads, PlayerUpdatePayload, OutgoingPayloads } from "../utils/payloads"
 import { OpCodes } from "../utils"
 import { RequestOptions, ResponseData } from "undici/types/dispatcher"
+import { CoffeeRoutePlanner } from "./CoffeeRoutePlanner"
 
 export interface NodeEvents {
   /** Emitted when node is destroyed */
@@ -44,6 +45,8 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   public resumed = false
   /** The http clients pool for http calls */
   public readonly http: Pool
+  /** THe routePlanner instance to manage route planners */
+  public readonly routePlanner = new CoffeeRoutePlanner(this)
   private reconnectTimeout?: NodeJS.Timeout
   private reconnectAttempts = 1
 
