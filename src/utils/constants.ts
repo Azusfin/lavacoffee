@@ -42,3 +42,15 @@ export enum PlayerVoiceStates {
   Disconnecting,
   Disconnected
 }
+
+export enum RoutePlanner {
+  Balancing = "BalancingIpRoutePlanner",
+  Rotating = "RotatingIpRoutePlanner",
+  Nano = "NanoIpRoutePlanner",
+  RotatingNano = "RotatingNanoIpRoutePlanner"
+}
+
+export enum IpBlock {
+  Ipv4 = "Inet4Address",
+  Ipv6 = "Inet6Address"
+}

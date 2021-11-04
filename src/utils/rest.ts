@@ -1,3 +1,5 @@
+import { IpBlock, RoutePlanner } from "./constants";
+
 export enum LoadTypes {
   TrackLoaded = "TRACK_LOADED",
   PlaylistLoaded = "PLAYLIST_LOADED",
@@ -35,4 +37,62 @@ export interface TracksData {
     message: string
     severity: string
   }
+}
+
+export interface RoutePlannerStatus {
+  class: RoutePlanner,
+  details: RoutePlannerDetails
+}
+
+export interface RoutePlannerDetails {
+  ipBlock: {
+    type: IpBlock,
+    size: string
+  },
+  failingAddresses: {
+    address: string,
+    failingTimestamp: number,
+    failingTime: string
+  }[]
+}
+
+/** [RoutePlanner](https://github.com/freyacodes/Lavalink/blob/master/ROUTEPLANNERS.md) */
+export type RoutePlanners =
+  | BalancingRoutePlanner
+  | RotatingRoutePlanner
+  | NanoRoutePlanner
+  | RotatingNanoRoutePlanner
+
+export interface BalancingRoutePlanner extends RoutePlannerStatus {
+  class: RoutePlanner.Balancing
+}
+
+export interface RotatingRoutePlanner extends RoutePlannerStatus {
+  class: RoutePlanner.Rotating
+  details: RotatingRoutePlannerDetails
+}
+
+export interface RotatingRoutePlannerDetails extends RoutePlannerDetails {
+  rotateIndex: string
+  ipIndex: string
+  currentAddress: string
+}
+
+export interface NanoRoutePlanner extends RoutePlannerStatus {
+  class: RoutePlanner.Nano
+  details: NanoRoutePlannerDetails
+}
+
+export interface NanoRoutePlannerDetails extends RoutePlannerDetails {
+  currentAddressIndex: string
+}
+
+export interface RotatingNanoRoutePlanner extends RoutePlannerStatus {
+  class: RoutePlanner.RotatingNano
+  details: RotatingNanoRoutePlannerDetails
+}
+
+export interface RotatingNanoRoutePlannerDetails extends RoutePlannerDetails {
+  blockIndex: string
+  currentAddressIndex: string
 }
