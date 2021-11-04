@@ -199,11 +199,11 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   })
   public async decodeTracks(tracks: string[]): Promise<Tracks> {
     const node = this.leastUsedNode!
-    const res = await node.post<Tracks>("/decodetracks", tracks, true)
+    const res = await node.post("/decodetracks", tracks, false)
 
     if (!res) throw new Error("No decoded data returned")
 
-    return res
+    return res as Tracks
   }
 
   /** Send voice data to the Lavalink server */
