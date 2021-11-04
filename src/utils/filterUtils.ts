@@ -47,8 +47,8 @@ export class FilterUtils {
       typeof volume !== "number" || isNaN(volume)
     ) throw new TypeError("Parameter 'volume' must be present and be a number")
     if (
-      volume <= 0 || volume > 5
-    ) throw new TypeError("Parameter 'volume' must be between 0 and 5")
+      volume < 0
+    ) throw new TypeError("Parameter 'volume' must be more or equal than 0")
 
     return method(volume)
   })
