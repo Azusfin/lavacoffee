@@ -90,7 +90,10 @@ lava.updateVoiceData(payload)
 ```
 
 ### Events
-> [LavaEvents](https://xzfirzal.github.io/lavacoffee/interfaces/LavaEvents.html)
+https://xzfirzal.github.io/lavacoffee/interfaces/LavaEvents.html
+```ts
+lava.on(eventName, (...args) => { ... })
+```
 
 ### Resuming Session
 ```ts
