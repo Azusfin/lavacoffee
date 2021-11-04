@@ -7,6 +7,7 @@ import { NodeOptions, NodeStats } from "../utils/typings"
 import { constructNode } from "../utils/decorators/constructs"
 import { IncomingPayloads, EventPayloads, PlayerUpdatePayload, OutgoingPayloads } from "../utils/payloads"
 import { OpCodes } from "../utils"
+import { RequestOptions } from "undici/types/dispatcher"
 
 export interface NodeEvents {
   /** Emitted when node is destroyed */
@@ -114,6 +115,37 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
 
     this.calls++
     return JSON.parse(partials.join(""))
+  }
+
+  /**
+   * Do http(s) post request to the node
+   */
+  public async post<T>(endpoint: string, body?: unknown, getResponse = false): Promise<T | undefined> {
+    endpoint = endpoint.replace(/^\//gm, "")
+
+    if (typeof body !== "undefined") body = JSON.stringify(body)
+
+    const headers = {
+      Authorization: this.options.password
+    }
+
+    const options: RequestOptions = {
+      path: `/${endpoint}`,
+      method: "POST",
+      bodyTimeout: this.options.requestTimeout,
+      headersTimeout: this.options.requestTimeout,
+      headers
+    }
+
+    if (typeof body === "string") {
+      headers["Content-Type"] = "application/json"
+      options.body = body
+    }
+
+    const res = await this.http.request(options)
+
+    this.calls++
+    if (getResponse) return res.body.json()
   }
 
   /**
