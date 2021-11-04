@@ -128,7 +128,8 @@ const config = {
 
 // Creating lava instance
 const lava = new CoffeeLava({
-  resumeConfig: config
+  resumeConfig: config,
+  /** other lava options */
 })
 ...
 ```

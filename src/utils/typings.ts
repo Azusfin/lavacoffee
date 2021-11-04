@@ -84,7 +84,7 @@ export interface LavaOptions {
   clientName?: string
   /** The shards count */
   shards?: number
-  /** Wether players should autmotically play next song */
+  /** Whether players should automatically play next song */
   autoPlay?: boolean
   /** The default search platform to use, can be "yt" for youtube, "ytm" for youtube music, and "sc" for soundcloud */
   defaultSearchPlatform?: SearchPlatform
