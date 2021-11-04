@@ -9,7 +9,7 @@ import { check } from "../utils/decorators/validators"
 import { EventTypes, LoopMode, OpCodes, PlayerStates, PlayerVoiceStates } from "../utils/constants"
 import { constructCoffee } from "../utils/decorators/constructs"
 import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
-import { LoadTypes, TrackData, TrackInfo, TracksData } from "../utils/rest"
+import { LoadTypes, TrackData, TrackInfo, Tracks, TracksData } from "../utils/rest"
 import { CoffeeQueue } from "./CoffeeQueue"
 
 export interface LavaEvents {
@@ -186,6 +186,24 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     }
 
     return data
+  }
+
+  /** Decode the base64 tracks into TracksData */
+  @check(function (this: CoffeeLava, method, tracks: string[]) {
+    if (
+      !Array.isArray(tracks)
+    ) throw new TypeError("Parameter 'tracks' must be present and be a non-empty-string array")
+    const node = this.leastUsedNode
+    if (!node || !node.connected) throw new Error("No node is available currently")
+    return method(tracks)
+  })
+  public async decodeTracks(tracks: string[]): Promise<Tracks> {
+    const node = this.leastUsedNode!
+    const res = await node.post<Tracks>("/decodetracks", tracks, true)
+
+    if (!res) throw new Error("No decoded data returned")
+
+    return res
   }
 
   /** Send voice data to the Lavalink server */
