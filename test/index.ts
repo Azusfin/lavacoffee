@@ -176,7 +176,11 @@ new LavalinkClient(async function (msg) {
           const stats = node.stats
           embed.addField(`${node.options.name} Stats`, `\`\`\`\nPlayers: ${stats.players}\nPlaying: ${stats.playingPlayers}\nUptime: ${
             ms(stats.uptime, { long: true })
-          }\nMemory: ${(stats.memory.used / 1024 / 1024).toFixed(2)}MB\nLast Updated: ${ms(Date.now() - node.stats.lastUpdated, { long: true })} ago\`\`\``)
+          }\nMemory: ${(stats.memory.used / 1024 / 1024).toFixed(2)}MB\nCPU Cores: ${stats.cpu.cores}\nCPU System Load: ${
+            ((stats.cpu.systemLoad / stats.cpu.cores) * 100).toFixed(2)
+          }%\nCPU Lavalink Load: ${
+            ((stats.cpu.lavalinkLoad / stats.cpu.cores) * 100).toFixed(2)
+          }%\nLast Updated: ${ms(Date.now() - node.stats.lastUpdated, { long: true })} ago\`\`\``)
         }
 
         msg.reply({ embeds: [embed] })
