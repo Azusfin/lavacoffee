@@ -59,6 +59,17 @@ export class CoffeePlayer {
     this.setVolume()
   }
 
+  /** Get the player absolute position on the current track */
+  public get absolutePosition(): number {
+    if (this.position === undefined) return 0
+
+    const { lastUpdated } = this
+    const rawPosition = this.position
+    const additional = Date.now() - lastUpdated
+
+    return rawPosition + additional
+  }
+
   /** The node used by player */
   public get node(): CoffeeNode {
     const node = this.lava.nodes.get(this.options.node!)

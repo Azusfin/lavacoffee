@@ -418,7 +418,7 @@ new LavalinkClient(async function (msg) {
         const embed = new MessageEmbed()
           .setTitle(track.title)
           .setURL(track.url)
-          .setDescription(`\`\`\`\nAuthor: ${track.author}\nDuration: ${ms(track.duration, { long: true })}\nPlayed since ${ms(player.position, { long: true })} ago\`\`\``)
+          .setDescription(`\`\`\`\nAuthor: ${track.author}\nDuration: ${ms(track.duration, { long: true })}\nPlayed since ${ms(player.absolutePosition, { long: true })} ago\`\`\``)
           .setColor("FUCHSIA")
         
         if (track.source === "youtube") embed.setThumbnail(track.displayThumbnail()!)
