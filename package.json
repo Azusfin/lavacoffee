@@ -23,7 +23,7 @@
     "lavalink-wrapper",
     "lavalink-client"
   ],
-  "author": "xzusfin",
+  "author": "Azusfin",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@types/debug": "^4.1.7",
@@ -54,10 +54,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/XzFirzal/lavacoffee"
+    "url": "https://github.com/Azusfin/lavacoffee"
   },
   "bugs": {
-    "url": "https://github.com/XzFirzal/lavacoffee/issues"
+    "url": "https://github.com/Azusfin/lavacoffee/issues"
   },
-  "homepage": "https://xzfirzal.github.io/lavacoffee"
+  "homepage": "https://azusfin.github.io/lavacoffee"
 }

@@ -32,10 +32,10 @@
 # Installation
 > NPM (Stable) => npm install lavacoffee
 
-> Github (Dev) => npm install XzFirzal/lavacoffee#main
+> Github (Dev) => npm install Azusfin/lavacoffee#main
 
 # Documentation
-> https://xzfirzal.github.io/lavacoffee
+> https://azusfin.github.io/lavacoffee
 
 # Getting Lavalink
 Download the latest binaries from the [CI Server (Dev)](https://ci.fredboat.com/repository/download/Lavalink_Build?guest=1&branch=refs/heads/dev)
@@ -56,7 +56,7 @@ Docker images are available on the [Docker hub](https://hub.docker.com/r/fredboa
 > Grab some coffee ☕
 
 # Test
-[Test Bot](https://github.com/XzFirzal/lavacoffee/blob/main/test/index.ts)
+[Test Bot](https://github.com/Azusfin/lavacoffee/blob/main/test/index.ts)
 > npm run test
 
 # Examples
@@ -90,7 +90,7 @@ lava.updateVoiceData(payload)
 ```
 
 ### Events
-https://xzfirzal.github.io/lavacoffee/interfaces/LavaEvents.html
+https://azusfin.github.io/lavacoffee/interfaces/LavaEvents.html
 ```ts
 lava.on(eventName, (...args) => { ... })
 ```
