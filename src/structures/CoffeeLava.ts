@@ -83,6 +83,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       defaultSearchPlatform: "yt",
       autoReplay: true,
       autoResume: true,
+      balanceLoad: "system",
       ...options
     }
 
@@ -99,12 +100,8 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
   public get leastLoadNode(): CoffeeNode | undefined {
     return this.sortAndGetFirstNode((l, r) => {
-      const lLoad = l.stats.cpu
-        ? (l.stats.cpu.systemLoad / l.stats.cpu.cores) * 100
-        : 0
-      const rLoad = r.stats.cpu
-        ? (r.stats.cpu.systemLoad / r.stats.cpu.cores) * 100
-        : 0
+      const lLoad = this.loadOf(l)
+      const rLoad = this.loadOf(r)
       return lLoad - rLoad
     })
   }
@@ -433,5 +430,17 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     }
 
     return nodes.values().next().value
+  }
+
+  private loadOf(node: CoffeeNode): number {
+    return node.stats.cpu
+      ? (
+        (
+          this.options.balanceLoad === "system"
+            ? node.stats.cpu.systemLoad
+            : node.stats.cpu.lavalinkLoad
+        ) / node.stats.cpu.cores
+      ) * 100
+      : 0
   }
 }

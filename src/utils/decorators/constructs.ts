@@ -58,6 +58,14 @@ export function constructCoffee(): (target: any) => any {
       (typeof options.structures !== "object" || options.structures === null)
     ) throw new TypeError("Lava option 'structures' must be an object")
 
+    if (typeof options.balanceLoad !== "undefined") {
+      if (typeof options.balanceLoad !== "string" || !options.balanceLoad) {
+        throw new TypeError("Lava option 'balanceLoad' must be a non-empty string")
+      } else if (options.balanceLoad !== "system" && options.balanceLoad !== "lavalink") {
+        throw new TypeError("Lava option 'balanceLoad' must be either \"system\" or \"lavalink\"")
+      }
+    }
+
     return new coffee(options)
   })
 }

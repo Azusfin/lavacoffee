@@ -96,6 +96,8 @@ export interface LavaOptions {
   resumeConfig?: ResumeConfig
   /** The used structures for the instance */
   structures?: Structures
+  /** Whether to use system load or lavalink load for load balancing, default to system */
+  balanceLoad?: "system" | "lavalink"
   /** Function to send voice state to the websocket */
   send(guildID: string, voiceState: VoiceStatePayload)
 }
