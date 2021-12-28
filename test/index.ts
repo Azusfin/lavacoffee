@@ -20,6 +20,7 @@ class LavalinkClient extends Client {
 
     this.prefix = config.prefix
     this.lava = new CoffeeLava({
+      balanceLoad: "lavalink",
       send: (guildID, p) => {
         const guild = this.guilds.cache.get(guildID)
         guild?.shard.send(p)
