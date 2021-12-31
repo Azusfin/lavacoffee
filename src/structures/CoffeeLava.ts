@@ -302,7 +302,6 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     node.removeAllListeners()
 
     node.on("event", payload => this.handleEvent(node, payload))
-    node.on("connect", () => this.emit("nodeConnect", node))
     node.on("missingPlugins", missing => this.emit("nodeMissingPlugins", node, missing))
     node.on("reconnect", () => this.emit("nodeReconnect", node))
     node.on("raw", payload => this.emit("nodeRaw", node, payload))
@@ -310,6 +309,17 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     node.on("destroy", () => {
       this.emit("nodeDestroy", node)
       this.nodes.delete(node.options.name)
+    })
+    node.on("connect", () => {
+      this.emit("nodeConnect", node)
+      if (this.options.autoReplay) {
+        for (const player of this.players.values()) {
+          if (player.options.node === node.options.name) {
+            player.options.node = undefined
+            player.setNode(node.options.name)
+          }
+        }
+      }
     })
     node.on("disconnect", reason => {
       this.emit("nodeDisconnect", node, reason)
