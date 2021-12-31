@@ -426,10 +426,11 @@ new LavalinkClient(async function (msg) {
           return
         }
 
-        if (!/^(?:http|https):\/\/open\.spotify\.com\/track\/.+$/.test(url)) {
+        if (!/^(?:http|https):\/\/open\.spotify\.com\/(?:track|album|playlist|artist)\/.+$/.test(url)) {
           msg.reply({
-            embeds: [error("Can only accept track url")]
+            embeds: [error("Unsupported url format")]
           })
+          return
         }
 
         const res = await this.lava.search({
@@ -448,8 +449,6 @@ new LavalinkClient(async function (msg) {
           return
         }
 
-        const track = res.tracks[0]
-
         const player = this.lava.create({
           guildID: msg.guildId!,
           requiredPlugins: ["spotify-plugin"],
@@ -458,12 +457,17 @@ new LavalinkClient(async function (msg) {
           }
         })
 
-        player.queue.add(track)
+        player.queue.add(res.tracks)
 
         const embed = new MessageEmbed()
           .setTitle("Loaded Tracks")
-          .setDescription(`Added ${track.title}`)
           .setColor("GREEN")
+
+        if (res.loadType === LoadTypes.TrackLoaded) {
+          embed.setDescription(`Added ${res.tracks[0].title}`)
+        } else if (res.loadType === LoadTypes.PlaylistLoaded) {
+          embed.setDescription(`Loaded ${res.playlist!.name}`)
+        }
 
         msg.reply({ embeds: [embed] })
 
