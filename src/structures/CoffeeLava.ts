@@ -392,6 +392,8 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         break
       case EventTypes.TrackEnd:
         {
+          if ((event as TrackEndPayload).reason === "CLEANUP") return
+
           this.emit("trackEnd", player, track, event as TrackEndPayload)
 
           if ((event as TrackEndPayload).reason === "REPLACED") return
