@@ -97,6 +97,8 @@ export class CoffeePlayer {
       ["op", "guildId", "event", "sessionId"].every(prop => prop in this.voice)
     ) void this.node.send(this.voice)
 
+    if (this.voiceState === PlayerVoiceStates.Connected) this.connect()
+
     if (this.queue.current) {
       void this.resolveCurrent().then(() => {
         const payload: PlayPayload = {
