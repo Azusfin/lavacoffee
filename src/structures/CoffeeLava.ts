@@ -238,7 +238,13 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         player.options.voiceID = p.d.channel_id
         if (!p.d.channel_id) {
           player.voiceState = PlayerVoiceStates.Disconnected
-          player.pause(true)
+          try {
+            if (player.state !== PlayerStates.Paused) {
+              player.pause(true)
+              player.needResume = true
+            }
+            // eslint-disable-next-line no-empty
+          } catch {}
         }
       }
     }

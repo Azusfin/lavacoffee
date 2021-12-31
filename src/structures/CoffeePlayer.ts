@@ -41,6 +41,8 @@ export class CoffeePlayer {
   public voice: VoiceUpdatePayload = Object.create(null)
   /** The player play options if its currently playing */
   public playOptions?: PlayOptions
+  /** Whether the player need to be resumed after connected */
+  public needResume = false
 
   public constructor(lava: CoffeeLava, options: PlayerOptions) {
     this.lava = lava
@@ -139,6 +141,13 @@ export class CoffeePlayer {
       }
     })
     this.voiceState = PlayerVoiceStates.Connected
+
+    try {
+      if (this.state === PlayerStates.Paused && this.needResume) {
+        this.pause(false)
+      }
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 
   /** Disconnect from the voice channel */
@@ -148,7 +157,6 @@ export class CoffeePlayer {
   })
   public disconnect(): void {
     this.voiceState = PlayerVoiceStates.Disconnecting
-    this.pause(true)
     this.lava.options.send(this.options.guildID, {
       op: 4,
       d: {
@@ -284,6 +292,7 @@ export class CoffeePlayer {
       pause
     }
     void this.node.send(payload)
+    this.needResume = false
   }
 
   /** Seek to the position in current track */
