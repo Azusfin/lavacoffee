@@ -98,11 +98,13 @@ export class CoffeePlayer {
 
     this.options.node = node
 
-    if (
-      ["op", "guildId", "event", "sessionId"].every(prop => prop in this.voice)
-    ) void this.node.send(this.voice)
+    if (this.voiceState === PlayerVoiceStates.Connected) {
+      if (
+        ["op", "guildId", "event", "sessionId"].every(prop => prop in this.voice)
+      ) void this.node.send(this.voice)
 
-    if (this.voiceState === PlayerVoiceStates.Connected) this.connect()
+      this.connect()
+    }
 
     if (this.queue.current) {
       void this.resolveCurrent().then(() => {
