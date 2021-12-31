@@ -18,6 +18,7 @@
   - [Events](#events)
   - [Resuming Session](#resuming-session)
   - [RoutePlanners](#routeplanners)
+  - [Lavalink Plugins](#lavalink-plugins)
   - [Players](#players)
     - [Creating](#creating)
     - [Getting](#getting)
@@ -156,6 +157,53 @@ await routePlanner.freeAddress(address)
 // Unmark all failed address
 // Return true if success, otherwise false
 await routePlanner.freeAllAddress()
+```
+
+### Lavalink Plugins
+Plugins are managed in the lavalink server itself.
+
+but you can make managing plugins in the node more spicier and stricter in lavacoffee
+```ts
+/**
+ * Using required plugins option
+ * on the lava instance make sure
+ * all nodes have the plugins
+ * otherwise they will be ignored
+ */
+
+// Incase if one of your worker messed up the plugins on the server...
+
+// Example when creating the instance
+const lava = new CoffeeLava({
+  requiredPlugins: ["Spotify-Plugin"],
+  send: (guildID, payload) => { ... }
+})
+
+/**
+ * Using required plugins option
+ * on search query make sure the searching
+ * doesn't use node that doesn't have
+ * the plugins
+ */
+
+// Example
+const searchResult = await lava.search({
+  query: url,
+  requiredPlugins: ["Spotify-Plugin"]
+}, author)
+
+/**
+ * Using required plugins option
+ * on player make sure the player
+ * doesn't use node that doesn't have
+ * the plugins
+ */
+
+// Example
+const player = lava.create({
+  guildID: guild.id,
+  requiredPlugins: ["Spotify-Plugin"]
+})
 ```
 
 ## Players 
