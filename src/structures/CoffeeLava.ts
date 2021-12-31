@@ -132,9 +132,10 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   public async search(query: SearchQuery, requester?: unknown): Promise<SearchResult> {
     const node = this.leastUsedNode!
     const source = query.source ?? this.options.defaultSearchPlatform!
+    const allowSearch = query.allowSearch ?? true
     let search = query.query
 
-    if (!/^(?:http|https):\/\//.test(search)) search = `${source}search:${search}`
+    if (allowSearch && !/^(?:(?:http|https):\/\/|\w+:)/.test(search)) search = `${source}search:${search}`
 
     const res = await node.request<TracksData>(`/loadtracks?identifier=${encodeURIComponent(search)}`)
 

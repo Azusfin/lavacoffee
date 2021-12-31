@@ -103,10 +103,12 @@ export interface LavaOptions {
 }
 
 export interface SearchQuery {
-  /** The source to search from */
-  source?: SearchPlatform
   /** The query to search for */
   query: string
+  /** Whether to allow using search */
+  allowSearch?: boolean
+  /** The source to search from */
+  source?: SearchPlatform
 }
 
 export interface PlayerOptions {
