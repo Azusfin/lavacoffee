@@ -37,12 +37,30 @@ class LavalinkClient extends Client {
 
     this.lava.on("nodeCreate", node => debug("Node Created: %s", node.options.name))
     this.lava.on("nodeDestroy", node => debug("Node Destroyed: %s", node.options.name))
-    this.lava.on("nodeConnect", node => debug("Node Connected: %s", node.options.name))
+    this.lava.on("nodeConnect", node => debug(
+      "Node Connected: %s, Plugins: %s",
+      node.options.name,
+      node.plugins.size
+        ? (() => {
+          const plugins: string[] = []
+          for (const plugin of node.plugins.keys()) {
+            plugins.push(plugin)
+          }
+          return plugins.join(" , ")
+        })()
+        : "(none)"
+    ))
+    this.lava.on("nodeMissingPlugins", (node, missing) => debug(
+      "Node Missing Plugins: %s, Missing: %s",
+      node.options.name,
+      missing.join(" , ")
+    ))
     this.lava.on("nodeReconnect", node => debug("Node Reconnecting: %s", node.options.name))
     this.lava.on("nodeDisconnect", (node, reason) => debug("Node Disconnected: %s, Code: %d, Reason: %s", node.options.name, reason.code, reason.reason))
     this.lava.on("nodeError", (node, error) => debug("Node Error: %s, Error: %O", node.options.name, error))
     this.lava.on("playerCreate", player => debug("Player Created: %s", player.options.guildID))
     this.lava.on("playerDestroy", player => debug("Player Destroyed: %s", player.options.guildID))
+    this.lava.on("playerMove", (player, oldCh, newCh) => debug("Player Move: %s, Old: %s, New: %s", player.options.guildID, oldCh, newCh))
     this.lava.on("socketClosed", (player, payload) => debug("Socket Closed: %s, Reason: %s", player.options.guildID, payload.reason))
 
     this.lava.on("playerReplay", player => {
@@ -377,6 +395,76 @@ new LavalinkClient(async function (msg) {
           .setTitle(`Added ${title}`)
           .setColor("GREEN")
         
+        msg.reply({ embeds: [embed] })
+
+        if (player.voiceState !== PlayerVoiceStates.Connected) {
+          if (!msg.member!.voice.channel) {
+            msg.reply({ embeds: [error("Cannot play the tracks because not connected to voice channel yet")] })
+            return
+          }
+
+          player.options.voiceID = msg.member!.voice.channelId!
+          player.connect()
+
+          const embed1 = new MessageEmbed()
+            .setTitle("Joined Voice")
+            .setDescription(`Joined to ${msg.member!.voice.channel!.name}`)
+            .setColor("GREEN")
+
+          msg.reply({ embeds: [embed1] })
+        }
+
+        if (!player.queue.current) await player.play({})
+      }
+      break
+    case "play-spotify":
+      {
+        const url = args[0]
+
+        if (!url) {
+          msg.reply({ embeds: [error("URL must be provided")] })
+          return
+        }
+
+        if (!/^(?:http|https):\/\/open\.spotify\.com\/track\/.+$/.test(url)) {
+          msg.reply({
+            embeds: [error("Can only accept track url")]
+          })
+        }
+
+        const res = await this.lava.search({
+          query: url,
+          allowSearch: false,
+          requiredPlugins: ["spotify-plugin"]
+        }, msg.author)
+
+        if (res.loadType === LoadTypes.NoMatches) {
+          msg.reply({ embeds: [error("No result found from query!")] })
+          return
+        }
+
+        if (res.loadType === LoadTypes.LoadFailed) {
+          msg.reply({ embeds: [error(`Search Failed, Reason: \`\`\`\n${res.error!.severity}: ${res.error!.message}\`\`\``)] })
+          return
+        }
+
+        const track = res.tracks[0]
+
+        const player = this.lava.create({
+          guildID: msg.guildId!,
+          requiredPlugins: ["spotify-plugin"],
+          metadata: {
+            text: msg.channel
+          }
+        })
+
+        player.queue.add(track)
+
+        const embed = new MessageEmbed()
+          .setTitle("Loaded Tracks")
+          .setDescription(`Added ${track.title}`)
+          .setColor("GREEN")
+
         msg.reply({ embeds: [embed] })
 
         if (player.voiceState !== PlayerVoiceStates.Connected) {
