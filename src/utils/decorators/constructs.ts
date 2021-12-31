@@ -66,6 +66,11 @@ export function constructCoffee(): (target: any) => any {
       }
     }
 
+    if (
+      typeof options.requiredPlugins !== "undefined" &&
+      !Array.isArray(options.requiredPlugins)
+    ) throw new TypeError("Lava option 'requiredPlugins' must be a string array")
+
     return new coffee(options)
   })
 }
@@ -113,6 +118,11 @@ export function constructPlayer(): (target: any) => any {
       typeof options.metadata !== "undefined" &&
       (typeof options.metadata !== "object" || options.metadata === null)
     ) throw new TypeError("Player option 'metadata' must be an object")
+
+    if (
+      typeof options.requiredPlugins !== "undefined" &&
+      !Array.isArray(options.requiredPlugins)
+    ) throw new TypeError("Player option 'requiredPlugins' must be a string array")
 
     return new player(lava, options)
   })

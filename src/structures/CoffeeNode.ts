@@ -3,7 +3,7 @@ import { Pool } from "undici"
 import { Writable } from "stream"
 import { CoffeeLava } from "./CoffeeLava"
 import { TypedEmitter } from "tiny-typed-emitter"
-import { NodeOptions, NodeStats } from "../utils/typings"
+import { NodeOptions, NodeStats, Plugins, PluginsRaw } from "../utils/typings"
 import { constructNode } from "../utils/decorators/constructs"
 import { IncomingPayloads, EventPayloads, PlayerUpdatePayload, OutgoingPayloads } from "../utils/payloads"
 import { OpCodes } from "../utils"
@@ -15,6 +15,8 @@ export interface NodeEvents {
   destroy(): void
   /** Emitted when node connects */
   connect(): void
+  /** Emitted when node lack required plugins after connected */
+  missingPlugins(missing: string[])
   /** Emitted when node reconnects */
   reconnect(): void
   /** Emitted when node disconnects */
@@ -47,8 +49,11 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   public readonly http: Pool
   /** THe routePlanner instance to manage route planners */
   public readonly routePlanner = new CoffeeRoutePlanner(this)
+  /** The list of plugins the node has */
+  public readonly plugins: Plugins = new Map()
   private reconnectTimeout?: NodeJS.Timeout
   private reconnectAttempts = 1
+  private readonly requiredPlugins: string[]
 
   public constructor(
     public readonly lava: CoffeeLava,
@@ -86,6 +91,8 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
     this.http = new Pool(`http${this.options.secure ? "s" : ""}://${this.options.url}`, {
       connections: this.options.maxConnections
     })
+
+    this.requiredPlugins = this.lava.options.requiredPlugins!
 
     this.lava.emit("nodeCreate", this)
     this.lava.nodes.set(this.options.name, this)
@@ -158,6 +165,8 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
    */
   public connect(): void {
     if (this.connected) return
+
+    this.plugins.clear()
 
     const headers = {
       Authorization: this.options.password,
@@ -233,6 +242,19 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
     })
   }
 
+  /** Fetch the plugins the node has */
+  public async fetchPlugins(): Promise<Plugins> {
+    const plugins: Plugins = new Map()
+
+    const rawPlugins = await this.request<PluginsRaw>("/plugins")
+
+    for (const plugin of rawPlugins) {
+      plugins.set(plugin.name, plugin.version)
+    }
+
+    return plugins
+  }
+
   private reconnect(): void {
     this.reconnectTimeout = setTimeout(() => {
       if (this.reconnectAttempts >= this.options.retryAmount!) {
@@ -250,10 +272,32 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
     }, this.options.retryDelay)
   }
 
-  private open(): void {
+  private async open(): Promise<void> {
     if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout)
-    this.connected = true
+
     this.configResume()
+
+    try {
+      const plugins = await this.fetchPlugins()
+
+      for (const [name, version] of plugins) {
+        this.plugins.set(name, version)
+      }
+      // eslint-disable-next-line no-empty
+    } catch {}
+
+    const missingPlugins: string[] = []
+
+    for (const plugin of this.requiredPlugins) {
+      if (!this.plugins.has(plugin)) missingPlugins.push(plugin)
+    }
+
+    if (missingPlugins.length) {
+      this.emit("missingPlugins", missingPlugins)
+    } else {
+      this.connected = true
+    }
+
     this.emit("connect")
   }
 

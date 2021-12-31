@@ -19,6 +19,8 @@ export interface LavaEvents {
   nodeDestroy(node: CoffeeNode): void
   /** Emitted when a node connects */
   nodeConnect(node: CoffeeNode): void
+  /** Emitted when a node lack required plugins after connected */
+  nodeMissingPlugins(node: CoffeeNode, missing: string[])
   /** Emitted when a Node reconnects */
   nodeReconnect(node: CoffeeNode): void
   /** Emitted when a Node disconnects */
@@ -84,6 +86,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       autoReplay: true,
       autoResume: true,
       balanceLoad: "system",
+      requiredPlugins: [],
       ...options
     }
 
@@ -95,11 +98,11 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   public get leastUsedNode(): CoffeeNode | undefined {
-    return this.sortAndGetFirstNode((l, r) => l.calls - r.calls)
+    return this.sortAndGetFirstNode(this.nodes, (l, r) => l.calls - r.calls)
   }
 
   public get leastLoadNode(): CoffeeNode | undefined {
-    return this.sortAndGetFirstNode((l, r) => {
+    return this.sortAndGetFirstNode(this.nodes, (l, r) => {
       const lLoad = this.loadOf(l)
       const rLoad = this.loadOf(r)
       return lLoad - rLoad
@@ -125,12 +128,14 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
       typeof query !== "object" ||
       query === null
     ) throw new TypeError("Parameter 'query' must be present and be an object")
-    const node = this.leastUsedNode
+    const plugins = query.requiredPlugins ?? []
+    const node = plugins.length ? this.leastUsedFilteredNode(plugins) : this.leastUsedNode
     if (!node || !node.connected) throw new Error("No node is available currently")
     return method(query, requester)
   })
   public async search(query: SearchQuery, requester?: unknown): Promise<SearchResult> {
-    const node = this.leastUsedNode!
+    const plugins = query.requiredPlugins ?? []
+    const node = plugins.length ? this.leastUsedFilteredNode(plugins)! : this.leastUsedNode!
     const source = query.source ?? this.options.defaultSearchPlatform!
     const allowSearch = query.allowSearch ?? true
     let search = query.query
@@ -298,6 +303,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
     node.on("event", payload => this.handleEvent(node, payload))
     node.on("connect", () => this.emit("nodeConnect", node))
+    node.on("missingPlugins", missing => this.emit("nodeMissingPlugins", node, missing))
     node.on("reconnect", () => this.emit("nodeReconnect", node))
     node.on("raw", payload => this.emit("nodeRaw", node, payload))
     node.on("error", error => this.emit("nodeError", node, error))
@@ -311,7 +317,12 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
         for (const player of this.players.values()) {
           if (player.options.node === node.options.name) {
             try {
-              player.setNode(this.leastLoadNode!.options.name)
+              const requiredPlugins = player.options.requiredPlugins!
+              player.setNode(
+                requiredPlugins.length
+                  ? this.leastLoadFilteredNode(requiredPlugins)!.options.name
+                  : this.leastLoadNode!.options.name
+              )
             } catch (error) {
               this.emit("replayError", player, error)
             }
@@ -342,6 +353,20 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     })
 
     if (this.clientID) node.connect()
+  }
+
+  public leastUsedFilteredNode(plugins: string[]): CoffeeNode | undefined {
+    const nodes = this.filterPlugins(plugins)
+    return this.sortAndGetFirstNode(nodes, (l, r) => l.calls - r.calls)
+  }
+
+  public leastLoadFilteredNode(plugins: string[]): CoffeeNode | undefined {
+    const nodes = this.filterPlugins(plugins)
+    return this.sortAndGetFirstNode(nodes, (l, r) => {
+      const lLoad = this.loadOf(l)
+      const rLoad = this.loadOf(r)
+      return lLoad - rLoad
+    })
   }
 
   private handleEvent(node: CoffeeNode, event: EventPayloads): void {
@@ -414,10 +439,13 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     }
   }
 
-  private sortAndGetFirstNode(sortFunc: (left: CoffeeNode, right: CoffeeNode) => number): CoffeeNode | undefined {
+  private sortAndGetFirstNode(
+    unsortedNodes: Map<string, CoffeeNode>,
+    sortFunc: (left: CoffeeNode, right: CoffeeNode) => number
+  ): CoffeeNode | undefined {
     const nodes = new Map<string, CoffeeNode>()
 
-    for (const [id, node] of this.nodes.entries()) {
+    for (const [id, node] of unsortedNodes) {
       if (node.connected) nodes.set(id, node)
     }
 
@@ -431,6 +459,21 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     }
 
     return nodes.values().next().value
+  }
+
+  private filterPlugins(plugins: string[]): Map<string, CoffeeNode> {
+    const nodes = new Map<string, CoffeeNode>()
+
+    nodeLoop:
+    for (const [id, node] of this.nodes) {
+      for (const plugin of plugins) {
+        if (!node.plugins.has(plugin)) continue nodeLoop
+      }
+
+      nodes.set(id, node)
+    }
+
+    return nodes
   }
 
   private loadOf(node: CoffeeNode): number {

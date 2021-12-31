@@ -98,6 +98,8 @@ export interface LavaOptions {
   structures?: Structures
   /** Whether to use system load or lavalink load for load balancing, default to system */
   balanceLoad?: "system" | "lavalink"
+  /** Required plugins for the nodes, a node won't be used if it doesn't have the required plugins */
+  requiredPlugins?: string[]
   /** Function to send voice state to the websocket */
   send(guildID: string, voiceState: VoiceStatePayload)
 }
@@ -109,6 +111,8 @@ export interface SearchQuery {
   allowSearch?: boolean
   /** The source to search from */
   source?: SearchPlatform
+  /** Required plugins for the node used to query */
+  requiredPlugins?: string[]
 }
 
 export interface PlayerOptions {
@@ -126,6 +130,8 @@ export interface PlayerOptions {
   selfDeaf?: boolean
   /** Additional metadata for player, if any */
   metadata?: Record<string, unknown>
+  /** Required plugins for the node used to play */
+  requiredPlugins?: string[]
 }
 
 export interface PlayOptions {
@@ -172,3 +178,13 @@ export interface Structures {
   Player?: new (lava: CoffeeLava, options: PlayerOptions) => CoffeePlayer
   Queue?: new () => CoffeeQueue
 }
+
+export interface PluginRaw {
+  name: string
+  version: string
+}
+
+export type PluginsRaw = PluginRaw[]
+
+/** K = pluginName, V = pluginVersion */
+export type Plugins = Map<string, string>

@@ -45,12 +45,17 @@ export class CoffeePlayer {
   public constructor(lava: CoffeeLava, options: PlayerOptions) {
     this.lava = lava
 
+    const requiredPlugins = options.requiredPlugins ?? []
+
     this.queue = new lava.options.structures!.Queue!()
     this.options = {
       volume: 100,
       selfMute: false,
       selfDeaf: true,
-      node: this.lava.leastLoadNode?.options.name,
+      node: requiredPlugins.length
+        ? this.lava.leastLoadFilteredNode(requiredPlugins)?.options.name
+        : this.lava.leastLoadNode?.options.name,
+      requiredPlugins,
       ...options
     }
 
