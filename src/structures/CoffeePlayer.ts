@@ -72,7 +72,9 @@ export class CoffeePlayer {
 
     const { lastUpdated } = this
     const rawPosition = this.position
-    const additional = Date.now() - lastUpdated
+    const additional = this.state === PlayerStates.Playing
+      ? Date.now() - lastUpdated
+      : 0
 
     return rawPosition + additional
   }
