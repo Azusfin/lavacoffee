@@ -5,8 +5,17 @@
   "main": "dist/index.js",
   "types": "index.d.ts",
   "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/index.mjs"
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./dist": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./dist/utils": "./dist/utils/index.js",
+    "./dist/structures": "./dist/structures/index.js",
+    "./*": "./*"
   },
   "scripts": {
     "esm": "gen-esm-wrapper . dist/index.mjs",
