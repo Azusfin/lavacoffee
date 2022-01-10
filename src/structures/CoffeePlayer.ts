@@ -117,7 +117,8 @@ export class CoffeePlayer {
           ...this.playOptions,
           guildId: this.options.guildID,
           track: (this.queue.current as CoffeeTrack).base64,
-          startTime: this.position
+          startTime: this.position,
+          pause: this.state === PlayerStates.Paused
         }
         this.lava.emit("playerReplay", this)
         void this.node.send(payload)
