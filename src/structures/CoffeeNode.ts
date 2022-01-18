@@ -98,6 +98,21 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
     this.lava.nodes.set(this.options.name, this)
   }
 
+  /** The node name */
+  public get name(): string {
+    return this.options.name
+  }
+
+  /** The node url */
+  public get url(): string {
+    return this.options.url
+  }
+
+  /** Whether the node allow secure protocol */
+  public get isSecure(): boolean {
+    return this.options.secure ?? false
+  }
+
   /**
    * Do http(s) request to the node
    */

@@ -66,6 +66,26 @@ export class CoffeePlayer {
     this.setVolume()
   }
 
+  /** The player guildID */
+  public get guildID(): string {
+    return this.options.guildID
+  }
+
+  /** The player volume */
+  public get volume(): number {
+    return this.options.volume!
+  }
+
+  /** The player voiceID */
+  public get voiceID(): string {
+    return this.options.voiceID!
+  }
+
+  public set voiceID(voiceID: string) {
+    if (typeof voiceID !== "string" || !voiceID) throw new TypeError("'voiceID' must be a non-empty string")
+    this.options.voiceID = voiceID
+  }
+
   /** Get the player absolute position on the current track */
   public get absolutePosition(): number {
     if (this.position === undefined) return 0
