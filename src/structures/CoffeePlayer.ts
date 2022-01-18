@@ -140,6 +140,8 @@ export class CoffeePlayer {
           startTime: this.position,
           pause: this.state === PlayerStates.Paused
         }
+        this.setVolume()
+        this.patchFilters()
         this.lava.emit("playerReplay", this)
         void this.node.send(payload)
         this.replaying = true
