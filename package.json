@@ -3,12 +3,14 @@
   "version": "1.5.2",
   "description": "A fast and rich-featured lavalink wrapper",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "index.d.ts",
   "scripts": {
+    "esm": "gen-esm-wrapper . dist/index.mjs",
     "dts": "dts-bundle --name \"lavacoffee\" --main dist --out index.d.ts",
     "docs": "typedoc src/index.ts --excludePrivate --excludeInternal --excludeExternals",
     "test": "tsc -p test.tsconfig.json && cpy package.json test/compiled && node test/compiled/test/index",
-    "build": "tsc && npm run dts && del-cli -f \"dist/**/*.d.ts\""
+    "build": "tsc && npm run dts && del-cli -f \"dist/**/*.d.ts\" && npm run esm"
   },
   "keywords": [
     "bot",
@@ -39,6 +41,7 @@
     "discord.js": "^13.2.0",
     "dts-bundle": "^0.7.3",
     "eslint": "^7.32.0",
+    "gen-esm-wrapper": "^1.1.3",
     "ms": "^2.1.3",
     "typedoc": "^0.22.7",
     "typescript": "^4.3.5"
