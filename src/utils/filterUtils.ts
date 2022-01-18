@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable func-names */
 /* eslint-disable prefer-arrow-callback */
+import "../structures"
 import { check } from "./decorators/validators"
 import { construct } from "./decorators/constructs"
 import { ChannelMix, Distortion, Equalizer, Filters, Karaoke, LowPass, Rotation, TimeScale, Tremolo, Vibrato } from "./filters"
