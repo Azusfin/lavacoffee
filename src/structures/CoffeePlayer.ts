@@ -195,11 +195,11 @@ export class CoffeePlayer {
   /** Play the next track in queue */
   @check(function (this: CoffeePlayer, method, options: PlayOptions) {
     if (
-      typeof options !== "object" || options === null
+      typeof options !== "undefined" && (typeof options !== "object" || options === null)
     ) throw new TypeError("Parameter 'options' must be present and be an object")
     return method(options)
   })
-  public async play(options: PlayOptions): Promise<void> {
+  public async play(options: PlayOptions = {}): Promise<void> {
     const prevOfPrevious = this.queue.previous
 
     if (
