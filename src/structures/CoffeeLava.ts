@@ -418,7 +418,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
             this.emit("queueEnd", player, track, event as TrackEndPayload)
           }
 
-          if (this.options.autoPlay) void player.play({})
+          if (this.options.autoPlay) void player.play(player.playOptions)
         }
         break
       case EventTypes.TrackStuck:
@@ -427,7 +427,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
           if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackStuckPayload)
           }
-          if (this.options.autoPlay) void player.play({})
+          if (this.options.autoPlay) void player.play(player.playOptions)
         }
         break
       case EventTypes.TrackException:
@@ -438,7 +438,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
           if (!player.queue.length && player.loop === LoopMode.None) {
             this.emit("queueEnd", player, track, event as TrackExceptionPayload)
           }
-          if (this.options.autoPlay) void player.play({})
+          if (this.options.autoPlay) void player.play(player.playOptions)
         }
         break
       case EventTypes.WebSocketClosed:
