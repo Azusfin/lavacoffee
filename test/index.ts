@@ -11,7 +11,7 @@ const debug = debugFactory("lavacoffee")
 
 class LavalinkClient extends Client {
   public prefix: string
-  public lava: CoffeeLava
+  public lava: CoffeeLava<number>
 
   constructor(onMessage: (this: LavalinkClient, msg: Message) => any) {
     super({

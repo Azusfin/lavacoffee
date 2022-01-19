@@ -100,7 +100,7 @@ export class CoffeePlayer<T = unknown> {
   }
 
   /** The node used by player */
-  public get node(): CoffeeNode {
+  public get node(): CoffeeNode<T> {
     const node = this.lava.nodes.get(this.options.node!)
     if (!node || !node.connected) throw new Error("No node is available currently")
     return node

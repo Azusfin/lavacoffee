@@ -3,9 +3,9 @@ import { RoutePlanners } from "../utils";
 import { check } from "../utils/decorators/validators";
 import { CoffeeNode } from "./CoffeeNode";
 
-export class CoffeeRoutePlanner {
+export class CoffeeRoutePlanner<T = unknown> {
   public constructor(
-    public node: CoffeeNode
+    public node: CoffeeNode<T>
   ) {}
 
   /** Get the routePlanner status */

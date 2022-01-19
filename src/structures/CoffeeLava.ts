@@ -14,21 +14,21 @@ import { CoffeeQueue } from "./CoffeeQueue"
 
 export interface LavaEvents<T = unknown> {
   /** Emitted when a node is created */
-  nodeCreate(node: CoffeeNode): void
+  nodeCreate(node: CoffeeNode<T>): void
   /** Emitted when a node is destroyed */
-  nodeDestroy(node: CoffeeNode): void
+  nodeDestroy(node: CoffeeNode<T>): void
   /** Emitted when a node connects */
-  nodeConnect(node: CoffeeNode): void
+  nodeConnect(node: CoffeeNode<T>): void
   /** Emitted when a node lack required plugins after connected */
-  nodeMissingPlugins(node: CoffeeNode, missing: string[])
+  nodeMissingPlugins(node: CoffeeNode<T>, missing: string[])
   /** Emitted when a Node reconnects */
-  nodeReconnect(node: CoffeeNode): void
+  nodeReconnect(node: CoffeeNode<T>): void
   /** Emitted when a Node disconnects */
-  nodeDisconnect(node: CoffeeNode, reason: { code: number, reason: string }): void
+  nodeDisconnect(node: CoffeeNode<T>, reason: { code: number, reason: string }): void
   /** Emitted when a Node has an error */
-  nodeError(node: CoffeeNode, error: Error): void
+  nodeError(node: CoffeeNode<T>, error: Error): void
   /** Emitted whenever any Lavalink event is received */
-  nodeRaw(node: CoffeeNode, payload: unknown): void
+  nodeRaw(node: CoffeeNode<T>, payload: unknown): void
   /** Emitted whenever a Player is created */
   playerCreate(player: CoffeePlayer<T>): void
   /** Emitted whenever a Player is destroyed */
@@ -59,10 +59,10 @@ export interface LavaEvents<T = unknown> {
  * The main hub for interacting with Lavalink and using LavaCoffee
  */
 @constructCoffee()
-export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
+export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents<T>> {
   public clientID?: string
   public options: LavaOptions<T>
-  public readonly nodes = new Map<string, CoffeeNode>()
+  public readonly nodes = new Map<string, CoffeeNode<T>>()
   public readonly players = new Map<string, CoffeePlayer<T>>()
 
   public constructor(options: LavaOptions<T>) {
@@ -97,11 +97,11 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
     }
   }
 
-  public get leastUsedNode(): CoffeeNode | undefined {
+  public get leastUsedNode(): CoffeeNode<T> | undefined {
     return this.sortAndGetFirstNode(this.nodes, (l, r) => l.calls - r.calls)
   }
 
-  public get leastLoadNode(): CoffeeNode | undefined {
+  public get leastLoadNode(): CoffeeNode<T> | undefined {
     return this.sortAndGetFirstNode(this.nodes, (l, r) => {
       const lLoad = this.loadOf(l)
       const rLoad = this.loadOf(r)
@@ -371,12 +371,12 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
     if (this.clientID) node.connect()
   }
 
-  public leastUsedFilteredNode(plugins: string[]): CoffeeNode | undefined {
+  public leastUsedFilteredNode(plugins: string[]): CoffeeNode<T> | undefined {
     const nodes = this.filterPlugins(plugins)
     return this.sortAndGetFirstNode(nodes, (l, r) => l.calls - r.calls)
   }
 
-  public leastLoadFilteredNode(plugins: string[]): CoffeeNode | undefined {
+  public leastLoadFilteredNode(plugins: string[]): CoffeeNode<T> | undefined {
     const nodes = this.filterPlugins(plugins)
     return this.sortAndGetFirstNode(nodes, (l, r) => {
       const lLoad = this.loadOf(l)
@@ -385,7 +385,7 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
     })
   }
 
-  private handleEvent(node: CoffeeNode, event: EventPayloads): void {
+  private handleEvent(node: CoffeeNode<T>, event: EventPayloads): void {
     if (!event.guildId) return
 
     const player = this.get(event.guildId)
@@ -458,10 +458,10 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
   }
 
   private sortAndGetFirstNode(
-    unsortedNodes: Map<string, CoffeeNode>,
-    sortFunc: (left: CoffeeNode, right: CoffeeNode) => number
-  ): CoffeeNode | undefined {
-    const nodes = new Map<string, CoffeeNode>()
+    unsortedNodes: Map<string, CoffeeNode<T>>,
+    sortFunc: (left: CoffeeNode<T>, right: CoffeeNode<T>) => number
+  ): CoffeeNode<T> | undefined {
+    const nodes = new Map<string, CoffeeNode<T>>()
 
     for (const [id, node] of unsortedNodes) {
       if (node.connected) nodes.set(id, node)
@@ -479,8 +479,8 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
     return nodes.values().next().value
   }
 
-  private filterPlugins(plugins: string[]): Map<string, CoffeeNode> {
-    const nodes = new Map<string, CoffeeNode>()
+  private filterPlugins(plugins: string[]): Map<string, CoffeeNode<T>> {
+    const nodes = new Map<string, CoffeeNode<T>>()
 
     nodeLoop:
     for (const [id, node] of this.nodes) {
@@ -494,7 +494,7 @@ export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
     return nodes
   }
 
-  private loadOf(node: CoffeeNode): number {
+  private loadOf(node: CoffeeNode<T>): number {
     return node.stats.cpu
       ? (
         (

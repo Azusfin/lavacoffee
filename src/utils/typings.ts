@@ -174,7 +174,7 @@ export interface ResumeConfig<T = unknown> {
 }
 
 export interface Structures<T = unknown> {
-  Node?: new (lava: CoffeeLava<T>, options: NodeOptions) => CoffeeNode
+  Node?: new (lava: CoffeeLava<T>, options: NodeOptions) => CoffeeNode<T>
   Player?: new (lava: CoffeeLava<T>, options: PlayerOptions) => CoffeePlayer<T>
   Queue?: new () => CoffeeQueue<T>
 }
