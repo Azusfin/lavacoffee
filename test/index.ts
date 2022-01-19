@@ -4,14 +4,14 @@ import ms from "ms"
 import debugFactory from "debug"
 import config from "./config.json"
 import { CoffeeLava, CoffeeNode, CoffeeTrack, UnresolvedTrack, CoffeeFilters, version as coffeeVersion } from "../src"
-import { Client, Intents, Message, MessageEmbed, MessageSelectMenu, TextChannel, version as djsVersion } from "discord.js"
+import { Client, Intents, Message, MessageEmbed, MessageSelectMenu, TextChannel, User, version as djsVersion } from "discord.js"
 import { LoadTypes, LoopMode, PlayerStates, PlayerVoiceStates } from "../src/utils"
 
 const debug = debugFactory("lavacoffee")
 
 class LavalinkClient extends Client {
   public prefix: string
-  public lava: CoffeeLava
+  public lava: CoffeeLava<User>
 
   constructor(onMessage: (this: LavalinkClient, msg: Message) => any) {
     super({
@@ -303,7 +303,7 @@ new LavalinkClient(async function (msg) {
               componentType: "SELECT_MENU"
             })
 
-            const tracks: CoffeeTrack[] = []
+            const tracks: CoffeeTrack<User>[] = []
 
             for (const value of interaction.values) {
               const index = Number(value)

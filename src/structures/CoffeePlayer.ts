@@ -14,13 +14,13 @@ import { LoadTypes } from "../utils/rest"
 import { FilterUtils } from "../utils/filterUtils"
 
 @constructPlayer()
-export class CoffeePlayer {
+export class CoffeePlayer<T = unknown> {
   /** The queue for the player */
-  public readonly queue: CoffeeQueue
+  public readonly queue: CoffeeQueue<T>
   /** The player options */
   public readonly options: PlayerOptions
   /** The player manager */
-  public readonly lava: CoffeeLava
+  public readonly lava: CoffeeLava<T>
   /** The player position in milliseconds */
   public position = 0
   /** Whether the player is currently replaying */
@@ -44,7 +44,7 @@ export class CoffeePlayer {
   /** Whether the player need to be resumed after connected */
   public needResume = false
 
-  public constructor(lava: CoffeeLava, options: PlayerOptions) {
+  public constructor(lava: CoffeeLava<T>, options: PlayerOptions) {
     this.lava = lava
 
     const requiredPlugins = options.requiredPlugins ?? []
@@ -100,7 +100,7 @@ export class CoffeePlayer {
   }
 
   /** The node used by player */
-  public get node(): CoffeeNode {
+  public get node(): CoffeeNode<T> {
     const node = this.lava.nodes.get(this.options.node!)
     if (!node || !node.connected) throw new Error("No node is available currently")
     return node

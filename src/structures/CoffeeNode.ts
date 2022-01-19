@@ -32,7 +32,7 @@ export interface NodeEvents {
 }
 
 @constructNode()
-export class CoffeeNode extends TypedEmitter<NodeEvents> {
+export class CoffeeNode<T = unknown> extends TypedEmitter<NodeEvents> {
   /** The node options */
   public options: NodeOptions
   /** The node stats */
@@ -48,7 +48,7 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   /** The http clients pool for http calls */
   public readonly http: Pool
   /** THe routePlanner instance to manage route planners */
-  public readonly routePlanner = new CoffeeRoutePlanner(this)
+  public readonly routePlanner = new CoffeeRoutePlanner<T>(this)
   /** The list of plugins the node has */
   public readonly plugins: Plugins = new Map()
   private reconnectTimeout?: NodeJS.Timeout
@@ -56,7 +56,7 @@ export class CoffeeNode extends TypedEmitter<NodeEvents> {
   private readonly requiredPlugins: string[]
 
   public constructor(
-    public readonly lava: CoffeeLava,
+    public readonly lava: CoffeeLava<T>,
     options: NodeOptions
   ) {
     super()

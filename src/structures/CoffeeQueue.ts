@@ -2,11 +2,11 @@ import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
 import { Queue } from "../utils/decorators/validators"
 
 /** The player's queue, the `current` property is the currently playing track, think of the rest as the up-coming tracks */
-export class CoffeeQueue extends Array<CoffeeTrack | UnresolvedTrack> {
+export class CoffeeQueue<T = unknown> extends Array<CoffeeTrack<T> | UnresolvedTrack<T>> {
   /** The current track */
-  public current?: CoffeeTrack | UnresolvedTrack
+  public current?: CoffeeTrack<T> | UnresolvedTrack<T>
   /** The previous track */
-  public previous?: CoffeeTrack | UnresolvedTrack
+  public previous?: CoffeeTrack<T> | UnresolvedTrack<T>
 
   /** The total duration of the queue */
   public get duration(): number {
@@ -27,7 +27,7 @@ export class CoffeeQueue extends Array<CoffeeTrack | UnresolvedTrack> {
   /** Add some track to the queue */
   @Queue.validateTracks()
   public add(
-    tracks: (CoffeeTrack | UnresolvedTrack) | (CoffeeTrack | UnresolvedTrack)[],
+    tracks: (CoffeeTrack<T> | UnresolvedTrack<T>) | (CoffeeTrack<T> | UnresolvedTrack<T>)[],
     offset?: number
   ): void {
     if (typeof offset === "undefined" && typeof offset !== "number") {
@@ -42,7 +42,7 @@ export class CoffeeQueue extends Array<CoffeeTrack | UnresolvedTrack> {
 
   /** Removes an amount of tracks using a exclusive start and end exclusive index, returning the removed tracks, EXCLUDING THE `current` TRACK */
   @Queue.validatePosition()
-  public remove(start: number, end?: number): (CoffeeTrack | UnresolvedTrack)[] {
+  public remove(start: number, end?: number): (CoffeeTrack<T> | UnresolvedTrack<T>)[] {
     if (typeof end !== "undefined") return this.splice(start, end - start)
     return this.splice(start, 1)
   }
@@ -61,9 +61,9 @@ export class CoffeeQueue extends Array<CoffeeTrack | UnresolvedTrack> {
   }
 
   /** Progress to next song */
-  public progress(): CoffeeTrack | UnresolvedTrack | undefined {
+  public progress(): CoffeeTrack<T> | UnresolvedTrack<T> | undefined {
     this.previous = this.current
-    this.current = this.shift() as CoffeeTrack
+    this.current = this.shift()
     return this.current
   }
 }
