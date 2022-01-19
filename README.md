@@ -19,6 +19,7 @@
   - [Resuming Session](#resuming-session)
   - [RoutePlanners](#routeplanners)
   - [Lavalink Plugins](#lavalink-plugins)
+  - [Track Decoding](#track-decoding)
   - [Players](#players)
     - [Creating](#creating)
     - [Getting](#getting)
@@ -204,6 +205,48 @@ const player = lava.create({
   guildID: guild.id,
   requiredPlugins: ["Spotify-Plugin"]
 })
+```
+
+### Track Decoding
+Decoding and encoding tracks are also available locally
+
+```ts
+// Import decoder and encoder from utils
+import { Utils } from "lavacoffee"
+const { TrackUtils } = Utils
+
+// Decode track
+const track = TrackUtils.decodeTrack(rawTrack)
+
+// Encode it back
+TrackUtils.encodeTrack(track)
+```
+
+With more details:
+```ts
+// Decode spotify track from spotify-plugin
+const spotifyTrack = TrackUtils.decodeTrack<{
+  isrc?: string,
+  artworkUrl?: string
+}>(
+  rawSpotifyTrack,
+  (_, data) => ({
+    isrc: data.readNullableText(),
+    artworkUrl: data.readNullableText()
+  })
+)
+
+// Encode it back
+TrackUtils.encodeTrack<{
+  isrc?: string,
+  artworkUrl?: string
+}>(
+  spotifyTrack,
+  (track, data) => {
+    data.writeNullableText(track.isrc)
+    data.writeNullableText(track.artworkUrl)
+  }
+)
 ```
 
 ## Players 
