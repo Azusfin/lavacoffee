@@ -79,7 +79,7 @@ export interface VoiceStatePayload {
   }
 }
 
-export interface LavaOptions {
+export interface LavaOptions<T = unknown> {
   /** The value to use for 'Client-Name' header */
   clientName?: string
   /** The shards count */
@@ -93,9 +93,9 @@ export interface LavaOptions {
   /** Wether to resume voice connection if socket closed unexpectedly */
   autoResume?: boolean
   /** The config for resuming */
-  resumeConfig?: ResumeConfig
+  resumeConfig?: ResumeConfig<T>
   /** The used structures for the instance */
-  structures?: Structures
+  structures?: Structures<T>
   /** Whether to use system load or lavalink load for load balancing, default to system */
   balanceLoad?: "system" | "lavalink"
   /** Required plugins for the nodes, a node won't be used if it doesn't have the required plugins */
@@ -141,20 +141,20 @@ export interface PlayOptions {
   endTime?: number
 }
 
-export interface Playlist {
+export interface Playlist<T = unknown> {
   /** The playlist name */
   name: string
   /** The selected track, if any */
-  selectedTrack: CoffeeTrack | null
+  selectedTrack: CoffeeTrack<T> | null
   /** Playlist total duration */
   duration: number
 }
 
-export interface SearchResult {
+export interface SearchResult<T = unknown> {
   /** Load type from searching */
   loadType: LoadTypes
   /** The tracks from searching */
-  tracks: CoffeeTrack[]
+  tracks: CoffeeTrack<T>[]
   /** The playlist info if load type is playlist */
   playlist?: Playlist
   /** Error from searching, if failed */
@@ -164,19 +164,19 @@ export interface SearchResult {
   }
 }
 
-export interface ResumeConfig {
+export interface ResumeConfig<T = unknown> {
   /** The resume key for resuming lavalink session */
   key: string
   /** The timeout for the session, if timeout is passed before resumed, it can't be resumed anymore */
   timeout?: number
   /** The function to create and handle player after resuming */
-  handle(lava: CoffeeLava, guildID: string, callback: (player: CoffeePlayer) => void): any
+  handle(lava: CoffeeLava<T>, guildID: string, callback: (player: CoffeePlayer<T>) => void): any
 }
 
-export interface Structures {
-  Node?: new (lava: CoffeeLava, options: NodeOptions) => CoffeeNode
-  Player?: new (lava: CoffeeLava, options: PlayerOptions) => CoffeePlayer
-  Queue?: new () => CoffeeQueue
+export interface Structures<T = unknown> {
+  Node?: new (lava: CoffeeLava<T>, options: NodeOptions) => CoffeeNode
+  Player?: new (lava: CoffeeLava<T>, options: PlayerOptions) => CoffeePlayer<T>
+  Queue?: new () => CoffeeQueue<T>
 }
 
 export interface PluginRaw {

@@ -12,7 +12,7 @@ import { CoffeeTrack, UnresolvedTrack } from "./CoffeeTrack"
 import { LoadTypes, TrackData, TrackInfo, Tracks, TracksData } from "../utils/rest"
 import { CoffeeQueue } from "./CoffeeQueue"
 
-export interface LavaEvents {
+export interface LavaEvents<T = unknown> {
   /** Emitted when a node is created */
   nodeCreate(node: CoffeeNode): void
   /** Emitted when a node is destroyed */
@@ -30,45 +30,45 @@ export interface LavaEvents {
   /** Emitted whenever any Lavalink event is received */
   nodeRaw(node: CoffeeNode, payload: unknown): void
   /** Emitted whenever a Player is created */
-  playerCreate(player: CoffeePlayer): void
+  playerCreate(player: CoffeePlayer<T>): void
   /** Emitted whenever a Player is destroyed */
-  playerDestroy(player: CoffeePlayer): void
+  playerDestroy(player: CoffeePlayer<T>): void
   /** Emitted whenever a Player is replaying after moving node */
-  playerReplay(player: CoffeePlayer): void
+  playerReplay(player: CoffeePlayer<T>): void
   /** Emitted whenever an error occured when replaying track */
-  replayError(player: CoffeePlayer, error: Error): void
+  replayError(player: CoffeePlayer<T>, error: Error): void
   /** Emitted whenever a Player is moved to other channel */
-  playerMove(player: CoffeePlayer, oldChannel: string | undefined, newChannel: string | undefined): void
+  playerMove(player: CoffeePlayer<T>, oldChannel: string | undefined, newChannel: string | undefined): void
   /** Emitted whenever queue is started */
-  queueStart(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackStartPayload): void
+  queueStart(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackStartPayload): void
   /** Emitted whenever queue is ended */
-  queueEnd(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackEndPayload | TrackStuckPayload | TrackExceptionPayload): void
+  queueEnd(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackEndPayload | TrackStuckPayload | TrackExceptionPayload): void
   /** Emitted whenever a track start */
-  trackStart(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackStartPayload): void
+  trackStart(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackStartPayload): void
   /** Emitted whenever a track end */
-  trackEnd(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackEndPayload): void
+  trackEnd(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackEndPayload): void
   /** Emitted whenever a track stuck during playback */
-  trackStuck(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackStuckPayload): void
+  trackStuck(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackStuckPayload): void
   /** Emitted whenever a track occur an error during playback */
-  trackError(player: CoffeePlayer, track: CoffeeTrack | UnresolvedTrack, payload: TrackExceptionPayload): void
+  trackError(player: CoffeePlayer<T>, track: CoffeeTrack<T> | UnresolvedTrack<T>, payload: TrackExceptionPayload): void
   /** Emitted whenever a voice connection is closed */
-  socketClosed(player: CoffeePlayer, payload: WebSocketClosedPayload): void
+  socketClosed(player: CoffeePlayer<T>, payload: WebSocketClosedPayload): void
 }
 
 /**
  * The main hub for interacting with Lavalink and using LavaCoffee
  */
 @constructCoffee()
-export class CoffeeLava extends TypedEmitter<LavaEvents> {
+export class CoffeeLava<T = unknown> extends TypedEmitter<LavaEvents> {
   public clientID?: string
-  public options: LavaOptions
+  public options: LavaOptions<T>
   public readonly nodes = new Map<string, CoffeeNode>()
-  public readonly players = new Map<string, CoffeePlayer>()
+  public readonly players = new Map<string, CoffeePlayer<T>>()
 
-  public constructor(options: LavaOptions) {
+  public constructor(options: LavaOptions<T>) {
     super()
 
-    const structures: Structures = {
+    const structures: Structures<T> = {
       Node: CoffeeNode,
       Player: CoffeePlayer,
       Queue: CoffeeQueue
@@ -110,7 +110,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Initiate the Lavalink client */
-  @check(function (this: CoffeeLava, method, clientID: string) {
+  @check(function (this: CoffeeLava<T>, method, clientID: string) {
     if (this.clientID) return
     if (
       typeof clientID !== "string" || !clientID
@@ -123,7 +123,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Searches some tracks based off the URL or the `source` property */
-  @check(function (this: CoffeeLava, method, query: SearchQuery, requester?: unknown) {
+  @check(function (this: CoffeeLava<T>, method, query: SearchQuery, requester?: unknown) {
     if (
       typeof query !== "object" ||
       query === null
@@ -133,7 +133,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     if (!node || !node.connected) throw new Error("No node is available currently")
     return method(query, requester)
   })
-  public async search(query: SearchQuery, requester?: unknown): Promise<SearchResult> {
+  public async search(query: SearchQuery, requester?: T): Promise<SearchResult<T>> {
     const plugins = query.requiredPlugins ?? []
     const node = plugins.length ? this.leastUsedFilteredNode(plugins)! : this.leastUsedNode!
     const source = query.source ?? this.options.defaultSearchPlatform!
@@ -146,9 +146,9 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
 
     if (!res) throw new Error("Query not found")
 
-    const result: SearchResult = {
+    const result: SearchResult<T> = {
       loadType: res.loadType,
-      tracks: res.tracks.map(track => new CoffeeTrack(track, requester))
+      tracks: res.tracks.map(track => new CoffeeTrack<T>(track, requester))
     }
 
     if (res.loadType === LoadTypes.LoadFailed) {
@@ -169,7 +169,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Decode the base64 track into TrackData */
-  @check(function (this: CoffeeLava, method, track: string) {
+  @check(function (this: CoffeeLava<T>, method, track: string) {
     if (
       typeof track !== "string" || !track
     ) throw new TypeError("Parameter 'track' must be present and be a non-empty string")
@@ -192,7 +192,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Decode the base64 tracks into TracksData */
-  @check(function (this: CoffeeLava, method, tracks: string[]) {
+  @check(function (this: CoffeeLava<T>, method, tracks: string[]) {
     if (
       !Array.isArray(tracks)
     ) throw new TypeError("Parameter 'tracks' must be present and be a non-empty-string array")
@@ -210,7 +210,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Send voice data to the Lavalink server */
-  @check(function (this: CoffeeLava, method, p: VoiceServerUpdate | VoiceStateUpdate) {
+  @check(function (this: CoffeeLava<T>, method, p: VoiceServerUpdate | VoiceStateUpdate) {
     if (
       !p ||
       !["VOICE_SERVER_UPDATE", "VOICE_STATE_UPDATE"].includes(p.t || "")
@@ -255,7 +255,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Configure the resume config */
-  @check(function (method, config: ResumeConfig) {
+  @check(function (method, config: ResumeConfig<T>) {
     if (
       typeof config !== "object" ||
       config === null
@@ -272,7 +272,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
     ) throw new TypeError("Config 'timeout' must be a number")
     return method(config)
   })
-  public configResume(config: ResumeConfig): void {
+  public configResume(config: ResumeConfig<T>): void {
     this.options.resumeConfig = {
       timeout: 60,
       ...config
@@ -291,7 +291,7 @@ export class CoffeeLava extends TypedEmitter<LavaEvents> {
   }
 
   /** Return a player or undefined if it doesn't exist */
-  public get(guildID: string): CoffeePlayer | undefined {
+  public get(guildID: string): CoffeePlayer<T> | undefined {
     return this.players.get(guildID)
   }
 

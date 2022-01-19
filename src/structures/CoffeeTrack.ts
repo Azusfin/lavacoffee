@@ -21,11 +21,11 @@ export interface ITrack {
 }
 
 @constructTrack()
-export class CoffeeTrack implements ITrack {
+export class CoffeeTrack<T = unknown> implements ITrack {
   /** The base 64 encoded of track */
   public readonly base64: string
   /** The requester of the track if any */
-  public readonly requester?: unknown
+  public readonly requester?: T
   public title: string
   public identifier: string
   public author: string
@@ -35,7 +35,7 @@ export class CoffeeTrack implements ITrack {
   public url: string
   public source: string
 
-  public constructor(track: TrackData, requester?: unknown) {
+  public constructor(track: TrackData, requester?: T) {
     this.base64 = track.track
     this.requester = requester
     this.build(track.info)
@@ -67,7 +67,7 @@ export class CoffeeTrack implements ITrack {
 }
 
 @constructUnresolved()
-export class UnresolvedTrack {
+export class UnresolvedTrack<T = unknown> {
   public constructor(
     /** Supposely the title of the track */
     public readonly title: string,
@@ -76,7 +76,7 @@ export class UnresolvedTrack {
     /** Supposably the duration of the track */
     public readonly duration?: number,
     /** The requester of the track if any */
-    public readonly requester?: unknown
+    public readonly requester?: T
   ) {}
 
   public static isUnresolved(obj: unknown): obj is UnresolvedTrack {
